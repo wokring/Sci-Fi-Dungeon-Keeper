@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+        </style>
+    </head>
+	<body>
+        <script type="module">
+            import WebGL from "./js/WebGL.js";
+
+            if (WebGL.isWebGLAvailable()) {
+                animate();
+            } else {
+                const warning = WebGL.getWebGLErrorMessage();
+                document.getElementById("container").appendChild(warning);
+            }
+        </script>
+		<script src="js/three.js"></script>
+        <script src="src/main.js"></script>
+	</body>
+</html>
