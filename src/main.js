@@ -1,4 +1,6 @@
 import { RoomTree, RoomNode } from "../modules/RoomTree.js" 
+import { CreateTestRoom } from "../modules/create_world.js"
+import { MapTile } from "../modules/MapTile.js"
 import WebGL from "../js/WebGL.js";
 
 const scene = new THREE.Scene();
@@ -21,6 +23,9 @@ function main() {
     document.body.appendChild(renderer.domElement);
     scene.add(cube);
     camera.position.z = 5;
+    
+    MapTile.scene = scene;
+    CreateTestRoom();
 
 //     const grid = [
 //         [null, null],
