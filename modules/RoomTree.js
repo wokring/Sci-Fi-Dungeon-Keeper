@@ -18,15 +18,17 @@ class RoomNode {
 
     addRoom(grid, direction, data) {
         if (direction == 0) {
-            if (this.parent.col - 1 < 0) {
+            if (this.col - 1 < 0) {
+                console.error("Out of grid to the left.");
                 return null;
             }
 
             this.left = new RoomNode(this, this.height, this.width, data, this.depth + 1);
-            grid[this.depth][this.parent.col-1] = this.left;
+            grid[this.depth][this.col-1] = this.left;
             return this.left;
         } else if (direction == 1) {
             if (this.depth + 1 > grid.length - 1) {
+                console.error("Out of grid to the bottom.");
                 return null;
             }
 
@@ -34,12 +36,13 @@ class RoomNode {
             grid[this.depth+1][this.col] = this.middle;
             return this.middle;
         } else if (direction == 2) {
-            if (this.parent.col + 1 > grid[0].length - 1) {
+            if (this.col + 1 > grid[0].length - 1) {
+                console.error("Out of grid to the right.");
                 return null;
             }
 
             this.right = new RoomNode(this, this.height, this.width, data, this.depth + 1);
-            grid[this.depth][this.parent.col+1] = this.right;
+            grid[this.depth][this.col+1] = this.right;
             return this.right;
         } else {
             return null;
@@ -47,6 +50,7 @@ class RoomNode {
     }
 }
 
+// NOTE: Grid generation is not implemented.
 class RoomTree {
     #height = 0;
     #width = 0;
@@ -60,7 +64,7 @@ class RoomTree {
 
     // TODO: Don't hardcode to only be in 0th row.
     set makeRoot(col) {
-        this.root = new RoomNode(null, this.#height, this.#width, null, 0);
+        this.root = new RoomNode(null, this.#height, this.#width, null, 0, col);
         this.grid[0][col] = this.root;
     }
 

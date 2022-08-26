@@ -22,6 +22,14 @@ function main() {
     scene.add(cube);
     camera.position.z = 5;
 
+//     const grid = [
+//         [null, null],
+//         [null, null]
+//     ];
+//     const roomTree = new RoomTree(2, 2, grid);
+//     roomTree.makeRoot = 1;
+//     console.log(grid[0][1]);
+//     roomTree.root.addRoom(grid, 2, null);
     if (WebGL.isWebGLAvailable()) {
         animate();
     } else {
