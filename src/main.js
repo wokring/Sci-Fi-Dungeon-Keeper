@@ -1,3 +1,6 @@
+import { RoomTree, RoomNode } from "../modules/RoomTree.js" 
+import WebGL from "../js/WebGL.js";
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
@@ -18,6 +21,14 @@ function main() {
     document.body.appendChild(renderer.domElement);
     scene.add(cube);
     camera.position.z = 5;
+
+    const roomTree = new RoomTree(5, 5);
+    if (WebGL.isWebGLAvailable()) {
+        animate();
+    } else {
+        const warning = WebGL.getWebGLErrorMessage();
+        document.getElementById("container").appendChild(warning);
+    }
 }
 
 window.onload = main;
