@@ -22,7 +22,6 @@ function main() {
     scene.add(cube);
     camera.position.z = 5;
 
-    const roomTree = new RoomTree(5, 5);
     if (WebGL.isWebGLAvailable()) {
         animate();
     } else {
