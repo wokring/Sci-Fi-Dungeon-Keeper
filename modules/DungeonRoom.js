@@ -1,4 +1,4 @@
-import {MapTile} from "./MapTile.js"
+import MapTile from "./MapTile.js"
 
 const NORTH = 1;
 const SOUTH = 2;

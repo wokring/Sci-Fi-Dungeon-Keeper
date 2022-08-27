@@ -1,5 +1,5 @@
 import RoomTree, { RoomNode, direction } from "../modules/RoomTree.js" 
-import buildDungeon from "../modules/DungeonLayout.js"
+import BuildDungeon from "../modules/DungeonLayout.js"
 import CreateWorld from "../modules/CreateWorld.js"
 import MapTile from "../modules/MapTile.js"
 import WebGL from "../js/WebGL.js";
