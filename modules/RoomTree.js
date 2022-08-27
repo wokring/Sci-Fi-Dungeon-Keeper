@@ -263,6 +263,17 @@ class RoomTree {
             parent = parent.addRoom(this.grid, dir, null);
         }
     }
+
+    preOrder(node, array){
+        array.push(node);
+        node.neighbours().forEach(neighbor => this.preOrder(neighbor, array));
+    }
+
+    getRandomNode(){
+        let preOrderArray = [];
+        this.preOrder(this.root, preOrderArray);
+        return preOrderArray[Math.floor(Math.random() * preOrderArray.length)];
+    }
 }
 
 export { RoomTree, RoomNode, direction };
