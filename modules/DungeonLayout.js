@@ -45,7 +45,6 @@ function BuildDungeon()
 			let dungeonIndex = new THREE.Vector2(i,j);
 			const newRoom = new DungeonRoom(dungeonIndex);
 			DungeonRooms[i].push(newRoom);
-		return DungeonRooms
 		}
 	}
 	
@@ -64,6 +63,8 @@ function BuildDungeon()
 		}
 		curRoom.CreateMapTiles();
 	}
+
+	return DungeonRooms
 }
 
 export {BuildDungeon, DungeonRooms, DungeonFactory,
