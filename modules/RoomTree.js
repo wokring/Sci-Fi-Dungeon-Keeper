@@ -52,7 +52,7 @@ class RoomNode {
             }
 
             this.children.left = new RoomNode(this, this.height, this.width, data, this.y, this.x-1);
-            grid[this.y][this.x-1] = this.left;
+            grid[this.y][this.x-1] = this.children.left;
             return this.left;
         } else if (dir == direction.right) {
             if (this.x + 1 > grid[0].length - 1) {
@@ -74,11 +74,34 @@ class RoomTree {
     #height = 0;
     #width = 0;
 
-    constructor(height, width, grid) {
+    constructor(height, width, dungeon) {
         this.#height = height;
         this.#width = width;
-        this.grid = grid; 
+        this.grid = []; 
+        this.dungeon = dungeon;
         this.root = null;
+    }
+
+    // [y, x]
+    nodeToDungeon(node) {
+        return this.dungeon[node.y][node.x]
+    }
+
+    dungeonToNode(x, y) {
+        return this.grid[y][x];
+    }
+
+    getGrid() {
+        return this.grid;
+    }
+
+    makeGrid(y, x) {
+        for (let j = 0; j < y; ++j) {
+            this.grid.push([]);
+            for (let i = 0; i < x; ++i) {
+                this.grid[j].push(null);
+            }
+        }
     }
 
     makeRoot(row, col) {
@@ -86,7 +109,6 @@ class RoomTree {
         this.grid[row][col] = this.root;
     }
 
-    // NOTE: May not need to be static
     getRoomNodePath(start, end) {
         const queue = [start];
         const parent = new Map();
@@ -135,22 +157,19 @@ class RoomTree {
 
     maxDepth() {
         let maxDepth = 0;
-        const queue = [[this.root, 1]];
-        const visited = new Set([]);
+        const queue = [[this.root, 0]];
+        const visited = new Set([this.root]);
 
         while (Array.isArray(queue) && queue.length) {
             let [node, depth] = queue.shift();
             maxDepth = Math.max(depth, maxDepth);
 
-            if (!visited.has(node)) {
-                visited.add(node);
+            for (let d in node.neighbours) {
+                let child = node.neighbours[d];
 
-                for (let child in node.neighbours) {
-
-                    if (child != null && !visited.has(child)) {
-                        visited.add(child);
-                        queue.push([child, depth+1]);
-                    }
+                if (child != null && !visited.has(child)) {
+                    visited.add(child);
+                    queue.push([child, depth+1]);
                 }
             }
         }
@@ -159,10 +178,10 @@ class RoomTree {
     }
 
     getRandomNode(start) {
-        let length = Math.floor(Math.random * maxDepth());
+        let length = Math.ceil(Math.random() * this.maxDepth());
         let distance = 0;
         const stack = [start];
-        const visited = new Set([]);
+        const visited = new Set([start]);
         const path = [start];
 
         while (Array.isArray(stack) && stack.length) {
@@ -172,23 +191,33 @@ class RoomTree {
                 return path;
             }
 
-            if (!visited.has(node)) {
-                visited.add(node);
-                let nodes = [...node.neighbours, node.parent];
+            let nodes = [];
+
+            for (let d in node.neighbours) {
+                nodes.push(node.neighbours[d]);
+            }
+
+            nodes = nodes.concat(node.parent);
+
+            while (true) {
                 let direction = Math.floor(Math.random() * 5);
                 let n = nodes[direction];
 
                 if (n != null && !visited.has(n)) {
                     visited.add(n);
-                    queue.push(n);
+                    stack.push(n);
                     path.push(n);
+                    break;
                 }
             }
 
             distance += 1;
         }
+
+        return path;
     }
 
+    // TODO: Test this
     heuristic() {
         return Math.round(Math.random());
     }
@@ -236,14 +265,16 @@ class RoomTree {
         }
     }
 
-    treemaker(start, end) {
+    // x and y values only
+    treeMaker(start, end) {
         let direction_y = 1;
         let direction_x = 1;
+        this.makeRoot(start[0], start[1]);
         if (end[0] - start[0] < 0) {
-            direction = -1;
+            direction_y = -1;
         }
         if (end[1] - start[1] < 0) {
-            direction = -1;
+            direction_x = -1;
         }
         
         var parent = this.root;
@@ -252,7 +283,7 @@ class RoomTree {
             if (direction_y < 0) {
                 dir =  0;
             }
-            parent = parent.addRoom(this.grid, dir, null);
+            parent = parent.addRoom(this.grid, dir, this.nodeToDungeon(this.dungeonToNode(start[1], i)));
         }
 
         for(let i = start[1]; i != end[1]; i = i + direction_x) {
@@ -260,19 +291,9 @@ class RoomTree {
             if (direction_x < 0) {
                 dir =  2;
             }
-            parent = parent.addRoom(this.grid, dir, null);
+            console.log(parent);
+            parent = parent.addRoom(this.grid, dir, this.nodeToDungeon(this.dungeonToNode(i, end[0])));
         }
-    }
-
-    preOrder(node, array){
-        array.push(node);
-        node.neighbours().forEach(neighbor => this.preOrder(neighbor, array));
-    }
-
-    getRandomNode(){
-        let preOrderArray = [];
-        this.preOrder(this.root, preOrderArray);
-        return preOrderArray[Math.floor(Math.random() * preOrderArray.length)];
     }
 }
 

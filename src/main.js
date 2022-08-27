@@ -1,5 +1,6 @@
-import { RoomTree, RoomNode } from "../modules/RoomTree.js" 
-import { CreateWorld } from "../modules/create_world.js"
+import { RoomTree } from "../modules/RoomTree.js"
+import { BuildDungeon, DungeonRooms, DUNGEON_WIDTH, DUNGEON_HEIGHT } from "../modules/DungeonLayout.js"
+import { CreateWorld } from "../modules/CreateWorld.js"
 import { UIBuildRoom } from "../modules/UIBuildRoom.js"
 import { MapTile } from "../modules/MapTile.js"
 import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
@@ -11,8 +12,9 @@ let camera,aspect,scene,renderer,gui;
 
 const CAMERA_HIDDEN_Z = 100;
 const GHOST_BUILD_Z = 3;
+const roomTree = new RoomTree(5, 5, DungeonRooms);
 
-function init(){
+function init() {
     scene = new THREE.Scene();
     aspect = window.innerWidth / window.innerHeight;
     camera = new THREE.OrthographicCamera(frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / - 2, 1, 1000);
@@ -79,7 +81,7 @@ function onDocumentMouseDown( event ) {
 
 	if(roomBuild == true)
 	{
-		UIBuildRoom(new THREE.Vector2(mx-WORLD_MIN_X-0.5,my-WORLD_MIN_Y-0.5));
+		UIBuildRoom(new THREE.Vector2(mx-WORLD_MIN_X-0.5,my-WORLD_MIN_Y-0.5), roomTree);
 
 		//exit room construction mode
 		roomBuild = false;
@@ -145,16 +147,10 @@ function onDocumentKeyDown(event) {
 
 function main() {
 	init()
-	//scene.add(cube);
-
-	//scene.add(create_plane(1,3));
-	//scene.add(create_plane(2,0));
-
-	//scene.add(cube2);
     	MapTile.scene = scene;
 	scene.add(ghostPlane);
 	ghostPlane.position.z = CAMERA_HIDDEN_Z;
-    	CreateWorld();
+    CreateWorld(roomTree);
     
 	if (WebGL.isWebGLAvailable()) {
 		cube2.position.x = -2
@@ -164,29 +160,17 @@ function main() {
 		const warning = WebGL.getWebGLErrorMessage();
 		document.getElementById("container").appendChild(warning);
 	}
-    const room1 = "room1";
-    const room2 = "room2";
-    const info1 = [1, 2, 3, 4, 5, 6, room1, [0,0],1];
-    const info2 = [1, 2, 3, 4, 5, 6, room2, [0,0],1];
-    const s1 = new Spawner(room1,info1, 5, 2);
-    const s2 = new Spawner(room2,info2, 2, 3);
-    const manager = new SpawnManager();
-    manager.addSpawn(s1);
-    manager.addSpawn(s2);
-    if (WebGL.isWebGLAvailable()) {
-        cube2.position.x = -2
-        cube2.position.y = -2
-        animate();
-    } else {
-        const warning = WebGL.getWebGLErrorMessage();
-        document.getElementById("container").appendChild(warning);
-    }
-
-    const grid = buildDungeon();
-    const roomTree = new RoomTree(5, 5, grid);
-    roomTree.makeRoot(3, 4);
-    roomTree.root.addRoom(grid, direction.up, null);
-    console.log(roomTree.maxDepth());
+//     const room1 = "room1";
+//     const room2 = "room2";
+//     const info1 = [1, 2, 3, 4, 5, 6, room1, [0,0],1];
+//     const info2 = [1, 2, 3, 4, 5, 6, room2, [0,0],1];
+//     const s1 = new Spawner(room1,info1, 5, 2);
+//     const s2 = new Spawner(room2,info2, 2, 3);
+//     const manager = new SpawnManager();
+//     manager.addSpawn(s1);
+//     manager.addSpawn(s2);
+    console.log(roomTree.grid);
+    console.log(roomTree.getRandomNode(roomTree.dungeonToNode(4, 0)));
 }
 
 

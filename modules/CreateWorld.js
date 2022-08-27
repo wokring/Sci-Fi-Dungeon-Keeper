@@ -1,5 +1,6 @@
-import MapTile from "./MapTile.js"
-import BuildDungeon from "./DungeonLayout.js"
+import { RoomTree } from "./RoomTree.js";
+import { MapTile } from "./MapTile.js"
+import { BuildDungeon, DungeonRooms, DUNGEON_WIDTH, DUNGEON_HEIGHT } from "./DungeonLayout.js"
 
 const NORTH = 1;
 const SOUTH = 2;
@@ -97,10 +98,16 @@ function CreateTestRoom()
 	new MapTile(WEST, new THREE.Vector2(-2, 1), FLOOR_D);
 }
 
-function CreateWorld()
+function CreateWorld(roomTree)
 {
 	//CreateTestRoom();
 	BuildDungeon();
+
+	const i = Math.ceil(DUNGEON_WIDTH/2);
+    roomTree.makeGrid(DUNGEON_HEIGHT, DUNGEON_WIDTH);
+    const startNode = [DUNGEON_HEIGHT - 1, i];
+    const endNode = [0, 2];
+    roomTree.treeMaker(startNode, endNode)
 }
 
 //a green background tile to debug if a tile is rendering properly
@@ -112,4 +119,4 @@ scene.add(bgPlane);
 bgPlane.position.z = -0.001;
 */
 
-export default CreateWorld;
+export { CreateWorld };

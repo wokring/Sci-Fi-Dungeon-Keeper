@@ -1,9 +1,10 @@
+import { RoomTree, direction } from "./RoomTree.js";
 import {DungeonRooms} from "./DungeonLayout.js"
 import {DungeonRoom} from "./DungeonRoom.js"
 import {MapTile} from "./MapTile.js"
 import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
 
-function UIBuildRoom(quantizedWorldCoords)
+function UIBuildRoom(quantizedWorldCoords, roomTree)
 {
 	//array safety checks
 	//console.log(quantizedWorldCoords);
@@ -41,6 +42,26 @@ function UIBuildRoom(quantizedWorldCoords)
 		return;
 	}
 	chosenRoom.CreateMapTiles();
+    nodeBuild(quantizedWorldCoords.x, quantizedWorldCoords.y, roomTree);
+}
+
+function nodeBuild(x, y, roomTree) {
+    if (roomTree.dungeonToNode(x - 1, y) != null) {
+        const node = roomTree.dungeonToNode(x - 1, y);
+        node.addRoom(roomTree.getGrid(), direction.right, roomTree.nodeToDungeon(node));
+    } else if (roomTree.dungeonToNode(x + 1, y) != null) {
+        const node = roomTree.dungeonToNode(x + 1, y);
+        node.addRoom(roomTree.getGrid(), direction.left, roomTree.nodeToDungeon(node));
+    } else if (roomTree.dungeonToNode(x, y - 1) != null) {
+        const node = roomTree.dungeonToNode(x, y - 1);
+        node.addRoom(roomTree.getGrid(), direction.up, roomTree.nodeToDungeon(node));
+    } else if (roomTree.dungeonToNode(x, y + 1) != null) {
+        const node = roomTree.dungeonToNode(x, y + 1);
+        node.addRoom(roomTree.getGrid(), direction.down, roomTree.nodeToDungeon(node));
+    } else {
+        console.error("x and y coordinates given does not have a neighbouring node.");
+        return null;
+    }
 }
 
 function CanBuild(tryRoom)

@@ -9,9 +9,11 @@ const WORLD_MIN_Y = -3.5;
 const WORLD_MAX_X = 3.5;
 const WORLD_MAX_Y = 3.5;
 
-function BuildDungeon()
+function BuildDungeon(roomTree)
 {	
-	for(var i=0; i<DUNGEON_WIDTH; i++)
+	const i = Math.ceil(DUNGEON_WIDTH/2);
+
+	for(let i=0; i<DUNGEON_WIDTH; i++)
 	{
 		DungeonRooms.push(new Array());
 		for(var j=0; j<DUNGEON_HEIGHT; j++)
@@ -22,8 +24,8 @@ function BuildDungeon()
 		}
 	}
 	
+
 	//setup the starting rooms
-	var i = Math.ceil(DUNGEON_WIDTH/2);
 	for(var j=0; j<DUNGEON_HEIGHT; j++)
 	{
 		const curRoom = DungeonRooms[i][j];

@@ -120,4 +120,4 @@ class MapTile
 	}
 }
 
-export default MapTile;
+export { MapTile };
