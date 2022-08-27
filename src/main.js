@@ -1,12 +1,15 @@
 import { RoomTree, RoomNode } from "../modules/RoomTree.js" 
 import { CreateWorld } from "../modules/create_world.js"
+import { UIBuildRoom } from "../modules/UIBuildRoom.js"
 import { MapTile } from "../modules/MapTile.js"
+import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
 import WebGL from "../js/WebGL.js";
 
 const frustumSize = 10;
 let camera,aspect,scene,renderer,gui;
-let ghost;
-var test = false;
+
+const CAMERA_HIDDEN_Z = 100;
+const GHOST_BUILD_Z = 3;
 
 function init(){
     scene = new THREE.Scene();
@@ -32,14 +35,10 @@ function init(){
     
 }
 
-const plane1_1 = new THREE.PlaneGeometry( 1, 1 );
-
-function create_plane( x, y){
-    var plane =  new THREE.Mesh(plane1_1, new THREE.MeshBasicMaterial({ color: 0x00ff00 }));
-    plane.position.x = x;
-    plane.position.y = y;
-    return plane;
-}
+const ghostGeom = new THREE.PlaneGeometry( 1, 1 );
+const ghostMat = new THREE.MeshBasicMaterial({ color: 0x00ff00, opacity: 0.1 });
+const ghostPlane = new THREE.Mesh(ghostGeom, ghostMat);
+let roomBuild = false;
 
 const geometry2 = new THREE.PlaneGeometry( 10, 1 );
 const material2 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
@@ -58,10 +57,6 @@ const cube2 = new THREE.Mesh(geometry, material);
 function animate() {
     requestAnimationFrame(animate);
 
-    if (test){
-        ghost.position.x = Math.ceil(mx - 0.5);
-        ghost.position.y = Math.ceil(my - 0.5);
-    }
     var obj = cube;
 
     var obj2 = cube2;
@@ -79,58 +74,95 @@ function animate() {
 }
 
 function onDocumentMouseDown( event ) {
-    mouse_down = true;    
-    if (test){
-        test = false;
-        ghost = null
+	mouse_down = true;    
 
-    }
+	if(roomBuild == true)
+	{
+		UIBuildRoom(new THREE.Vector2(mx-WORLD_MIN_X-0.5,my-WORLD_MIN_Y-0.5));
+
+		//exit room construction mode
+		roomBuild = false;
+		ghostPlane.position.z = CAMERA_HIDDEN_Z;
+	}
+    
 }
 function onDocumentMouseUp( event ) {
     mouse_down = false;
 }
 function onDocumentMouseMove(event) {
-    event.preventDefault();
-    if (mouse_down){
-        for (let i =0; i < 4; i++){
-            if (gui[i] != null){
-                gui[i].position.x -= event.movementX * 0.01;
-                gui[i].position.y += event.movementY * 0.01;
-            }
-        }        
-    }
-    mx = camera.position.x + aspect * frustumSize *((event.clientX/window.innerWidth)*2 -1) * 0.5;
-    my = camera.position.y + -frustumSize *((event.clientY/window.innerHeight)*2 -1) * 0.5;
+	event.preventDefault();
+
+	//update the coordinates of the "mouse over" room
+	mx = Math.ceil(camera.position.x + aspect * frustumSize *((event.clientX/window.innerWidth)*2 -1) * 0.5 - 0.5);
+	my = Math.ceil(camera.position.y + -frustumSize *((event.clientY/window.innerHeight)*2 -1) * 0.5 - 0.5);
+	
+	//boundary checks
+	if(mx < WORLD_MIN_X+0.5)
+	{
+		mx = WORLD_MIN_X+0.5;
+	}
+	else if(mx > WORLD_MAX_X+0.5)
+	{
+		mx = WORLD_MAX_X+0.5;
+	}
+	if(my < WORLD_MIN_Y+0.5)
+	{
+		my = WORLD_MIN_Y+0.5;
+	}
+	else if(my > WORLD_MAX_Y+0.5)
+	{
+		my = WORLD_MAX_Y+0.5;
+	}
+
+	//click and drag the map around
+	if (mouse_down){
+		for (let i =0; i < 4; i++){
+			if (gui[i] != null){
+				gui[i].position.x -= event.movementX * 0.01;
+				gui[i].position.y += event.movementY * 0.01;
+			}
+		}
+	}
+	
+	//update the position of the construction ghost
+	if (roomBuild == true){
+		ghostPlane.position.x = mx;
+		ghostPlane.position.y = my;
+		//console.log("animate() ghost:" + ghost.position.x + "," + ghost.position.x);
+	}
 }
 function onDocumentKeyDown(event) {
-    if (event.key == 'a' && !test){
-        test = true;
-        ghost = create_plane(0,0);
-        ghost.material.opacity = 0.1;
-        ghost.position.z = 3;
-        scene.add(ghost);
+	//press 'a' to go into room construction mode, and create a construction ghost
+	//this is a visual effect which follows the cursor
+    if (event.key == 'a'){
+	ghostPlane.position.x = mx;
+	ghostPlane.position.y = my;
+        ghostPlane.position.z = GHOST_BUILD_Z;
+        roomBuild = true;
     }
 }
 
 function main() {
-    init()
-    scene.add(cube);
+	init()
+	//scene.add(cube);
 
-    scene.add(create_plane(1,3));
-    scene.add(create_plane(2,0));
+	//scene.add(create_plane(1,3));
+	//scene.add(create_plane(2,0));
 
-    scene.add(cube2);
-    MapTile.scene = scene;
-    CreateWorld();
+	//scene.add(cube2);
+    	MapTile.scene = scene;
+	scene.add(ghostPlane);
+	ghostPlane.position.z = CAMERA_HIDDEN_Z;
+    	CreateWorld();
     
-    if (WebGL.isWebGLAvailable()) {
-        cube2.position.x = -2
-        cube2.position.y = -2
-        animate();
-    } else {
-        const warning = WebGL.getWebGLErrorMessage();
-        document.getElementById("container").appendChild(warning);
-    }
+	if (WebGL.isWebGLAvailable()) {
+		cube2.position.x = -2
+		cube2.position.y = -2
+		animate();
+	} else {
+		const warning = WebGL.getWebGLErrorMessage();
+		document.getElementById("container").appendChild(warning);
+	}
 }
 
 
