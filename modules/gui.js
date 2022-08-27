@@ -1,5 +1,4 @@
 import {scene,renderer} from "../src/main.js"
-import {init_document_events} from "../modules/document_events.js"
 
 import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
 import {Spawner, SpawnManager} from "../modules/Spawner.js";
