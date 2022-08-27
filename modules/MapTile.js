@@ -70,19 +70,19 @@ class MapTile
 		MapTile.scene.add(this.myPlane);
 		
 		//set the desired position
-		this.myPlane.position.x = tileCoords.x;
-		this.myPlane.position.y = tileCoords.y;
+		this.myPlane.position.x = worldCoords.x;
+		this.myPlane.position.y = worldCoords.y;
 		this.myPlane.position.z = WALL_RENDER_DEPTH;
 		
 		/*
 		//offset for northfacing walls to handle iso view
 		if(wallDir&NORTH)
 		{
-			this.myPlane.position.y = tileCoords.y + 1;
+			this.myPlane.position.y = worldCoords.y + 1;
 		}
 		else
 		{
-			this.myPlane.position.y = tileCoords.y;
+			this.myPlane.position.y = worldCoords.y;
 		}
 		*/
 		
