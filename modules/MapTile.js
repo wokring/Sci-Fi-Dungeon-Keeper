@@ -1,3 +1,4 @@
+import {scene} from "../src/main.js"
 
 //static bitflag defines for our directions
 const NORTH = 1;
@@ -67,7 +68,7 @@ class MapTile
 			MapTile.worldTileDefaults.y);
 		this.myMat = new THREE.MeshBasicMaterial( {map : this.myTexture, transparent : true} );
 		this.myPlane = new THREE.Mesh( this.myGeom, this.myMat );
-		MapTile.scene.add(this.myPlane);
+		scene.add(this.myPlane);
 		
 		//set the desired position
 		this.myPlane.position.x = worldCoords.x;
@@ -111,7 +112,7 @@ class MapTile
 			customWallTileDims.y/MapTile.worldTileDefaults.y);*/
 		this.myFloorMat = new THREE.MeshBasicMaterial( {map : this.myFloorTexture, transparent : true} );
 		this.myFloorPlane = new THREE.Mesh( this.myGeom, this.myFloorMat );
-		MapTile.scene.add(this.myFloorPlane);
+		scene.add(this.myFloorPlane);
 		
 		//set the desired position
 		this.myFloorPlane.position.x = worldCoords.x;
