@@ -11,6 +11,7 @@ class Spawner{
         this._spawnSpan = spawnSpan;
         this._timeUntilNextSpawn = spawnSpan;
         this._spawnLimit = spawnLimit;
+        this.spawn();
     }
     get units() {
         return this._units;
@@ -51,6 +52,8 @@ class Spawner{
             let mob = MobManager.getInstance().createMob(new Unit(10,10,10,1,1,1,scene,[0,1],[3,5]));
             //console.log(mob);
             this._units.push(mob);
+            mob.dungeon
+            //fight()
             return mob;
         } else {}
     }
