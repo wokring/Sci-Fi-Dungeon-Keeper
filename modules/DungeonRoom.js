@@ -1,0 +1,6 @@
+
+class DungeonRoom
+{
+}
+
+export {DungeonRoom};
