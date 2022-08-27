@@ -126,5 +126,4 @@ class RoomTree {
     }
 }
 
-export default RoomTree;
-export { RoomNode };
+export { RoomNode,RoomTree };

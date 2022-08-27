@@ -7,4 +7,4 @@ class DungeonRoom
     }
 }
 
-export default {DungeonRoom};
+export {DungeonRoom};
