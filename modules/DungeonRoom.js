@@ -19,8 +19,8 @@ class DungeonRoom
 		this.myWorldCoords = new THREE.Vector2(dungeonIndex.x + WORLD_MIN_X, dungeonIndex.y + WORLD_MIN_Y);
 		this.isBuilt = false;
         
-		this.units = [];
-		this.trap = [];
+		this.unit = [];
+		this.trap = null;
 		this.spawn = [];
 		this.texture = [];
 	}
