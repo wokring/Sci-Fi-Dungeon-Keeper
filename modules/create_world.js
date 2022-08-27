@@ -1,6 +1,5 @@
-
-import { MapTile } from "../modules/MapTile.js"
-import { BuildDungeon } from "../modules/DungeonLayout.js"
+import MapTile from "./MapTile.js"
+import BuildDungeon from "./DungeonLayout.js"
 
 const NORTH = 1;
 const SOUTH = 2;
@@ -113,4 +112,4 @@ scene.add(bgPlane);
 bgPlane.position.z = -0.001;
 */
 
-export { CreateWorld };
+export default CreateWorld;
