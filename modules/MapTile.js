@@ -25,11 +25,11 @@ class MapTile
 	static dirLookupTileIndex;
 	static dirLookupTileDims;
 	static dirLookupFloorIndex;
-	static worldTileDefaults = new THREE.Vector2(32,32);
-	constructor(wallDir, tileCoords, floorID)
+	static worldTileDefaults = new THREE.Vector2(0.2,0.2);	//in world coords
+	constructor(wallDir, worldCoords, floorID)
 	{
 		this.myDir = wallDir;
-		this.myCoords = tileCoords;
+		this.myCoords = worldCoords;
 		//look up the tile index from the chosen wall direction... it is stored as a string
 		//sprite sheet tile index starts from 0 in the bottom left corner
 		//this.myTileIndex = new THREE.Vector2(1, 21);	
@@ -114,8 +114,8 @@ class MapTile
 		MapTile.scene.add(this.myFloorPlane);
 		
 		//set the desired position
-		this.myFloorPlane.position.x = tileCoords.x;
-		this.myFloorPlane.position.y = tileCoords.y;
+		this.myFloorPlane.position.x = worldCoords.x;
+		this.myFloorPlane.position.y = worldCoords.y;
 		this.myFloorPlane.position.z = FLOOR_RENDER_DEPTH;		//render "below" walls
 		
 	}

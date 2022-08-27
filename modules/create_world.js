@@ -100,7 +100,7 @@ function CreateTestRoom()
 
 function CreateWorld()
 {
-	CreateTestRoom();
+	//CreateTestRoom();
 	BuildDungeon();
 }
 
