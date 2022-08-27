@@ -7,6 +7,7 @@ function UIBuildRoom(quantizedWorldCoords)
 {
 	//array safety checks
 	//console.log(quantizedWorldCoords);
+	console.log(quantizedWorldCoords.x)
 	if(quantizedWorldCoords.x >= DungeonRooms.length)
 	{
 		console.log("Error: attempted to index " + quantizedWorldCoords.x + 
@@ -38,9 +39,10 @@ function UIBuildRoom(quantizedWorldCoords)
 	if(!CanBuild(chosenRoom))
 	{
 		//play sfx for build failure here
-		return;
+		return null;
 	}
 	chosenRoom.CreateMapTiles();
+	return chosenRoom.sprite;
 }
 
 function CanBuild(tryRoom)

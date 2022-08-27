@@ -9,10 +9,10 @@ import {scene} from "../src/main.js"
 const DungeonRooms = []; 
 const DUNGEON_HEIGHT = 8;
 const DUNGEON_WIDTH = 8;
-const WORLD_MIN_X = -3.5;
-const WORLD_MIN_Y = -3.5;
-const WORLD_MAX_X = 3.5;
-const WORLD_MAX_Y = 3.5;
+const WORLD_MIN_X = -3;
+const WORLD_MIN_Y = -3;
+const WORLD_MAX_X = 4;
+const WORLD_MAX_Y = 4;
 var DungeonFactory = (function(){
 	class Dungeon {
 		constructor() {
