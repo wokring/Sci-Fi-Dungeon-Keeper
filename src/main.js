@@ -1,11 +1,15 @@
 import { RoomTree, RoomNode } from "../modules/RoomTree.js" 
 import { CreateWorld } from "../modules/create_world.js"
+import {DungeonRooms} from "../modules/DungeonLayout.js"
 import { UIBuildRoom } from "../modules/UIBuildRoom.js"
 import { MapTile } from "../modules/MapTile.js"
 import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
 import WebGL from "../js/WebGL.js";
 import {Spawner, SpawnManager} from "../modules/Spawner.js";
+import { Trap } from "../modules/Trap.js"
 
+const ROOM_COSTP = [1000,5,3,4,1,2,3,4,5,100]
+const ROOM_COSTC = [1000,10,3,4,3,2,3,4,5,50]
 let camera,aspect,scene,renderer,gui,ghostPlane;
 let CP_ctx,PT_ctx,CP_t,PT_t;
 const plane05_1 = new THREE.PlaneGeometry( 1, 0.5 );
@@ -16,18 +20,49 @@ const frustumSize = 10;
 var mx = 0;
 var my = 0;
 
-let roomBuild = false;
+var power = 100;
+var circuit = 20;
+
+// var ROOM_COSTP = 10
+// var ROOM_COSTC = 2
+
+let Build = false;
+var buildType = 0;
 var mouse_down = false;
 
 function onDocumentMouseDown( event ) {
 	mouse_down = true;    
 
-	if(roomBuild == true)
+	if(Build == true)
 	{
-		UIBuildRoom(new THREE.Vector2(mx-WORLD_MIN_X-0.5,my-WORLD_MIN_Y-0.5));
-		//exit room construction mode
-		roomBuild = false;
-		ghostPlane.position.z = CAMERA_HIDDEN_Z;
+
+        if (power >= ROOM_COSTP[buildType] && circuit >= ROOM_COSTC[buildType] && buildType > 0){
+            var x = mx-WORLD_MIN_X-0.5;
+            var y = my-WORLD_MIN_Y-0.5;
+            power -= ROOM_COSTP[buildType];
+            circuit -= ROOM_COSTC[buildType];
+            switch(buildType){
+                case 1:
+                        UIBuildRoom(new THREE.Vector2(x,y)); 
+                    break;
+                case 4:
+                    if (DungeonRooms[x][y].isBuilt && DungeonRooms[x][y].trap == null){
+                        DungeonRooms[x][y].trap = new Trap(10,5,x -3 ,y -3);
+                        power -= 2;
+
+                        scene.add(DungeonRooms[x][y].trap.sprite)
+                    }
+                    break;
+
+            }
+        }
+        //exit room construction mode
+        buildType = 0;
+        Build = false
+        ghostPlane.position.z = CAMERA_HIDDEN_Z;
+        update_text(power.toString(),PT_ctx,PT_t);
+        update_text(circuit.toString(),CP_ctx,CP_t);
+        
 	}
     
 }
@@ -37,8 +72,8 @@ function onDocumentMouseUp( event ) {
 function onDocumentMouseMove(event) {
 	event.preventDefault();
 	//update the coordinates of the "mouse over" room
-	mx = Math.ceil(camera.position.x + aspect * frustumSize *((event.clientX/window.innerWidth)*2 -1) * 0.5 - 0.5);
-	my = Math.ceil(camera.position.y + -frustumSize *((event.clientY/window.innerHeight)*2 -1) * 0.5 - 0.5);
+	mx = Math.ceil(camera.position.x + aspect * frustumSize *((event.clientX/window.innerWidth)*2 -1) * 0.5 - 0.4);
+	my = Math.ceil(camera.position.y + -frustumSize *((event.clientY/window.innerHeight)*2 -1) * 0.5 - 0.4);
 	
 	//boundary checks
 	if(mx < WORLD_MIN_X+0.5)
@@ -69,7 +104,7 @@ function onDocumentMouseMove(event) {
 	}
 	
 	//update the position of the construction ghost
-	if (roomBuild == true){
+	if (Build == true){
 		ghostPlane.position.x = mx;
 		ghostPlane.position.y = my;
 		//console.log("animate() ghost:" + ghost.position.x + "," + ghost.position.x);
@@ -77,17 +112,33 @@ function onDocumentMouseMove(event) {
 }
 
 function onDocumentKeyDown(event) {
+    ghostPlane.position.x = mx;
+    ghostPlane.position.y = my;
+    
+    switch(event.key) {
+        case "a":
+            ghostPlane.position.z = GHOST_BUILD_Z;
+            Build = true;
+            buildType = 1;
+            break;
+        case "v":
+            ghostPlane.position.z = GHOST_BUILD_Z;
+            Build = true;
+            buildType = 4;
+            break;
+        case "e":
+            ghostPlane.position.z = GHOST_BUILD_Z;
+            Build = true;
+            buildType = 3;
+            break;
+        default:
+            break;
+    }
 	//press 'a' to go into room construction mode, and create a construction ghost
 	//this is a visual effect which follows the cursor
-    if (event.key == 'a'){
-	    ghostPlane.position.x = mx;
-	    ghostPlane.position.y = my;
-        ghostPlane.position.z = GHOST_BUILD_Z;
-        roomBuild = true;
-    }
 }
 
-function create_context(color){
+function create_context(color,text){
 
     var context= document.createElement("canvas").getContext("2d");  
     context.canvas.height = 200;
@@ -95,7 +146,7 @@ function create_context(color){
     context.clearRect(0, 0, 400, 200);
     context.fillStyle = color;
     context.font = "bold 140px Arial";
-    context.fillText("223",0,200);
+    context.fillText(text,0,200);
     return context
 
 }
@@ -110,7 +161,7 @@ function init_gui(){
     bar.position.y += -4;
     bar.position.z += 3;
 
-    CP_ctx = create_context("blue")
+    CP_ctx = create_context("blue","5")
     CP_t = new THREE.CanvasTexture(CP_ctx.canvas)
     var CP_tp =  new THREE.Mesh(plane05_1, new THREE.MeshBasicMaterial({ map: CP_t, }));
     CP_tp.material.transparent = true;
@@ -118,7 +169,7 @@ function init_gui(){
     CP_tp.position.z += 3;
     CP_tp.position.y += 2.6;
 
-    PT_ctx = create_context("blue")
+    PT_ctx = create_context("blue","10")
     PT_t = new THREE.CanvasTexture(PT_ctx.canvas)
     var PT_tp =  new THREE.Mesh(plane05_1, new THREE.MeshBasicMaterial({ map: PT_t, }));
     PT_tp.material.transparent = true;
