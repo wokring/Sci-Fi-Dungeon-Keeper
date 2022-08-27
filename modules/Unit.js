@@ -19,7 +19,7 @@ class Unit {
         this._speed = value;
     }
     set position(value) {
-        console.log(value);
+        //console.log(value);
         this._position = value;
     }
     get range() {
