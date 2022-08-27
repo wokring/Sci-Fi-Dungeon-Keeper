@@ -45,8 +45,6 @@ const geometry2 = new THREE.PlaneGeometry( 10, 1 );
 const material2 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const bar = new THREE.Mesh(geometry2,material2)
 
-var cube;
-
 var mx = 0;
 var my = 0;
 var mouse_down = false;
@@ -117,7 +115,6 @@ function onDocumentKeyDown(event) {
 
 function main() {
     init()
-    cube = create_plane(1,0);
     scene.add(cube);
 
     scene.add(create_plane(1,3));
