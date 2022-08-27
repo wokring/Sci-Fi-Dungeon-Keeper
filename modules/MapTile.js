@@ -63,8 +63,8 @@ class MapTile
 		
 		//finalise the render object creation
 		this.myGeom = new THREE.PlaneGeometry(
-			customWallTileDims.x/MapTile.worldTileDefaults.x, 
-			customWallTileDims.y/MapTile.worldTileDefaults.y);
+			MapTile.worldTileDefaults.x, 
+			MapTile.worldTileDefaults.y);
 		this.myMat = new THREE.MeshBasicMaterial( {map : this.myTexture, transparent : true} );
 		this.myPlane = new THREE.Mesh( this.myGeom, this.myMat );
 		MapTile.scene.add(this.myPlane);
