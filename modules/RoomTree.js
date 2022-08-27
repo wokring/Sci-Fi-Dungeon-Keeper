@@ -1,126 +1,109 @@
 class RoomNode {
-    constructor(parent, height, width, data, level) {
+    left = null;
+    middle = null;
+    right = null;
+
+    constructor(parent, height, width, data, depth, col) {
         this.parent = parent;
         this.height = height;
         this.width = width;
         this.data = data;
-        this.level = level;
-        this.trap = 
-        this.children = [];
+        this.depth = depth
+        this.col = col;
     }
 
-    get area() {
-        return this.calcArea();
+    get neighbours() {
+        return [this.left, this.middle, this.right];
     }
 
-    addRoom(height, width, data) {
-        this.children.push(new RoomNode(this.parent, height, width, data, this.level + 1));
-    }
+    addRoom(grid, direction, data) {
+        if (direction == 0) {
+            if (this.col - 1 < 0) {
+                console.error("Out of grid to the left.");
+                return null;
+            }
 
-    calcArea() {
-        return this.height * this.width;
+            this.left = new RoomNode(this, this.height, this.width, data, this.depth + 1);
+            grid[this.depth][this.col-1] = this.left;
+            return this.left;
+        } else if (direction == 1) {
+            if (this.depth + 1 > grid.length - 1) {
+                console.error("Out of grid to the bottom.");
+                return null;
+            }
+
+            this.middle = new RoomNode(this, this.height, this.width, data, this.depth + 1);
+            grid[this.depth+1][this.col] = this.middle;
+            return this.middle;
+        } else if (direction == 2) {
+            if (this.col + 1 > grid[0].length - 1) {
+                console.error("Out of grid to the right.");
+                return null;
+            }
+
+            this.right = new RoomNode(this, this.height, this.width, data, this.depth + 1);
+            grid[this.depth][this.col+1] = this.right;
+            return this.right;
+        } else {
+            return null;
+        }
     }
 }
-class Trap {
-    constructor(hit_rate, damage, debuff = null) {
-        this.chance = hit_rate // ranges from 0 - 1
-        this.damage = damage
-        this.debuff = debuff
+
+// NOTE: Grid generation is not implemented.
+class RoomTree {
+    #height = 0;
+    #width = 0;
+    root = null;
+
+    constructor(height, width, grid) {
+        this.#height = height;
+        this.#width = width;
+        this.grid = grid; // Starting node it always in 0th row but column is arbitrary.
     }
-    doHit(unit) { 
-        if (this.chance == 1) {
-            unit.getHit(this.damage)
-        } else if ((Math.floor(Math.random() * 100) < ((this.chance / unit.dodge) * 100))) {
-            if (this.debuff != null) {
-                unit.getHit(this.damage, this.debuff)
-            } else {
-                unit.getHit(this.damage)
+
+    // TODO: Don't hardcode to only be in 0th row.
+    set makeRoot(col) {
+        this.root = new RoomNode(null, this.#height, this.#width, null, 0, col);
+        this.grid[0][col] = this.root;
+    }
+
+    getRoomNode(direction, depth) {
+        const q = [this.root];
+        const v = new Set([]);
+
+        if (depth == 0) {
+            return this.root;
+        } 
+
+        while (typeof q != "undefined" && q != null && q.length != null && q.length > 0) {
+            let n = q.pop();
+
+            if (n.level == depth) {
+                switch (direction) {
+                    case 0:
+                        if (n.parent.left != null) { return n.parent.left; }
+                    case 1:
+                        if (n.parent.middle != null) { return n.parent.middle; } 
+                    case 2:
+                        if (n.parent.right != null) { return n.parent.right; }
+                    default:
+                        return false;
+                }
+            }
+
+            if (!v.has(n)) {
+                v.add(n);
+
+                for (let i = 0; i < 3; ++i) {
+                    if (n.neighbours[i] != null && !v.has(n.neighbours[i])) {
+                        q.push(n.neighbours[i]);
+                    }
+                }
             }
         }
-    }
-}
 
-class TeleporterTrap extends Trap {
-    constructor(hit_rate, damage, uses = 1) {
-        super(hit_rate, damage);
-        this.uses = uses
-    }
-    doHit(unit) {
-        if (this.uses == 0) {
-            // do nothing
-        } else {
-            //access singleton roomtree here and get a random room in the range, then move the unit to that room
-            this.uses -= 1
-        }
-    }
-}
-
-class Unit {
-    constructor(cost, health, damage, interval, speed, range, room, pos = [0,0], level = 1) {
-        this.cost = cost
-        this._health = health
-        this._damage = damage
-        this.interval = interval
-        this._speed = speed
-        this._range = range
-        this.level = level
-        this.position = pos // relative positon of unit in the room
-        this.room = room //this is the current node of the unit.c
-        this.debuff = [1,1]
-    }
-
-    get speed() {
-        return this._speed * this.debuff[0]
-    }
-    set speed(value) {
-        this._speed = value
-    }
-    set position(value) {
-        console.log(value)
-        this.position = value
-    }
-    get range() {
-        return this._range * this.debuff[1]
-    }
-    set range(value) {
-        this._range = value
-    }
-
-    get health() {
-        return this._health * 2^(level - 1)
-    }
-    set health(value) {
-        this._health = value / (2^(level - 1))
-    }
-    get damage() {
-        return this._damage * 2^(level - 1)
-    }
-    set damage(value) {
-        this._damage = value / (2^(level - 1))
-    }
-    getHit(damage, debuff = [1, 1]) {
-        if (this.damage - damage <= 0) {
-            this.damage = 0
-        } else {
-            this.damage -= damage
-        }
-        this.debuff = debuff
-    }
-    resetDebuff() {
-        this.debuff = [1, 1]
-    }
-}
-
-class EnemyUnit extends Unit {
-    constructor(cost, health, damage, interval, speed, range, room, pos = [0,0], level = 1, dodge_chance) {
-        super(cost, health, damage, interval, speed, range, room, level);
-        this.dodge = dodge_chance; // dodge chance is the scaling on the trap chance some units have.
-        this.last_direction = null
-    }
-}
-class RoomTree {
-    constructor(height, width) {
-        this.root = new RoomNode(null, height, width, null, 0);
+        return false;
     }
 }
 
