@@ -46,22 +46,11 @@ var cube;
 
 var mx = 0;
 var my = 0;
-var tx = 0;
-var ty = 0;
 var mouse_down = false;
 
 function animate() {
     requestAnimationFrame(animate);
-    
-    if (!mouse_down){
-        var xd = tx -cube.position.x ;
-        var yd = ty -cube.position.y ;
-        var ins = Math.sqrt(xd**2 + yd**2);
-        if (Math.abs(ins) > 0.1){
-            cube.position.x += 0.05 * (xd/ins);
-            cube.position.y += 0.05 * (yd/ins);
-        }
-    }
+
     if (test){
         ghost.position.x = Math.ceil(mx - 0.5);
         ghost.position.y = Math.ceil(my - 0.5);
@@ -72,12 +61,11 @@ function animate() {
 
 function onDocumentMouseDown( event ) {
     mouse_down = true;    
-    tx = mx;
-    ty = my;
-    console.log(ty);
-    console.log(window.innerHeight);
-    console.log(window.innerWidth);
-    console.log(tx);
+    if (test){
+        test = false;
+        ghost = null
+
+    }
 }
 function onDocumentMouseUp( event ) {
     mouse_down = false;
@@ -96,7 +84,7 @@ function onDocumentMouseMove(event) {
     my = camera.position.y + -frustumSize *((event.clientY/window.innerHeight)*2 -1) * 0.5;
 }
 function onDocumentKeyDown(event) {
-    if (event.key == 'a'){
+    if (event.key == 'a' && !test){
         test = true;
         ghost = create_plane(0,0);
         ghost.material.opacity = 0.1;
