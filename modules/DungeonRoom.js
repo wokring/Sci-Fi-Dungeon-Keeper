@@ -14,13 +14,15 @@ const FLOOR_D = 4;
 
 class DungeonRoom
 {
+	static nextId = 1;
 	constructor(dungeonIndex)
 	{
 		this.myDungeonIndex = dungeonIndex;
 		this.myWorldCoords = new THREE.Vector2(dungeonIndex.x + WORLD_MIN_X, dungeonIndex.y + WORLD_MIN_Y);
 		this.isBuilt = false;
+		this.id = DungeonRoom.nextId++;
         
-		this.unit = [];
+		this.units_present = [];
 		this.trap = null;
 		this.spawn = [];
 		this.texture = [];
@@ -88,7 +90,8 @@ class DungeonRoom
 	{
 		var otherCentre = otherRoom.getCentre();
 		var myCentre = this.getCentre();
-		return otherCentre.x * otherCentre.x + otherCentre.y * otherCentre.y;
+		return (myCentre.x - otherCentre.x) * (myCentre.x - otherCentre.x) + 
+			(myCentre.y - otherCentre.y) * (myCentre.y - otherCentre.y);
 	}
 	getAngle(otherRoom)
 	{
@@ -128,6 +131,19 @@ class DungeonRoom
 			rooms.push(adjRoom);
 		}
 		return rooms;
+	}
+	onMobEnter(mob)
+	{
+		this.units_present.push(mob);
+		//console.log("maptile #" + this.id + " entered by mob #" + mob.id);
+	}
+	onMobExit(mob)
+	{
+		if(this.units_present.indexOf(mob) >= 0)
+		{
+			this.units_present.splice(this.units_present.indexOf(mob),1);
+			//console.log("maptile #" + this.id + " exited by mob #" + mob.id);
+		}
 	}
 }
 
