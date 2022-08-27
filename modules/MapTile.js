@@ -10,8 +10,10 @@ const FLOOR_B = 2;
 const FLOOR_C = 3;
 const FLOOR_D = 4;
 
-const FLOOR_RENDER_DEPTH = -0.000001;
-const WALL_RENDER_DEPTH = 0;
+const FLOOR_RENDER_DEPTH = -0.001;
+const WALL_RENDER_DEPTH = 0.01;
+
+const TILE_INDEX_FAIL = new THREE.Vector2(0,0);
 
 class MapTile
 {
@@ -38,8 +40,8 @@ class MapTile
 		}
 		else
 		{
-			//todo: draw a big red X or something to say broken sprite
-			tileIndex = new THREE.Vector2(36,21);
+			//a big red X to say broken sprite
+			tileIndex = TILE_INDEX_FAIL;
 		}
 		
 		//does this tile index have special dimensions handling? for any NORTH flag walls
@@ -92,8 +94,8 @@ class MapTile
 		}
 		else
 		{
-			//todo: draw a big red X or something to say broken sprite
-			floorIndex = MapTile.dirLookupFloorIndex.get("" + FLOOR_D);
+			//a big red X to say broken sprite
+			floorIndex = TILE_INDEX_FAIL;
 		}
 		
 		//render texture for the floor
@@ -104,7 +106,7 @@ class MapTile
 		this.myFloorTexture.needsUpdate = true;
 		
 		//finalise the render object creation
-/*		this.myGeom = new THREE.PlaneGeometry(
+		/*this.myGeom = new THREE.PlaneGeometry(
 			customWallTileDims.x/MapTile.worldTileDefaults.x, 
 			customWallTileDims.y/MapTile.worldTileDefaults.y);*/
 		this.myFloorMat = new THREE.MeshBasicMaterial( {map : this.myFloorTexture, transparent : true} );
