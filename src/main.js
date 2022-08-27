@@ -5,7 +5,7 @@ import { MapTile } from "../modules/MapTile.js"
 import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
 import WebGL from "../js/WebGL.js";
 import {Spawner, SpawnManager} from "../modules/Spawner.js";
-import { MobManager } from "../modules/MobManager.js"
+import { mobManager } from "../modules/MobManager.js"
 import { Unit } from "../modules/Unit.js"
 
 let camera,aspect,scene,renderer,gui,ghostPlane;
@@ -177,6 +177,10 @@ function init(){
     ghostPlane = new THREE.Mesh(new THREE.PlaneGeometry( 1, 1 ), new THREE.MeshBasicMaterial({ color: 0x00ff00, opacity: 0.1 }));
     ghostPlane.position.z = CAMERA_HIDDEN_Z;
 
+    CreateWorld();
+    
+	mobManager.init(scene);
+    
     scene.add(ghostPlane);
     init_gui()
     
@@ -190,11 +194,11 @@ function init(){
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
+    mobManager.Update(CLOCK.getDelta());
 }
 
 function main() {
 	init()
-    CreateWorld();
     
 	if (WebGL.isWebGLAvailable()) {
 		animate();

@@ -1,5 +1,6 @@
 import {DungeonRoom} from "./DungeonRoom.js"
 import {Spawner, SpawnManager} from "../modules/Spawner.js";
+import {PathHelper} from "./PathHelper.js"
 
 
 
@@ -62,10 +63,12 @@ function BuildDungeon()
 		if(j == 0)
 		{
 			//our treasure room
+			PathHelper.treasureRoom = curRoom;
 		}
 		else if(j == DUNGEON_HEIGHT - 1)
 		{
 			//our spawning room
+			PathHelper.entranceRoom = curRoom;
 		}
 		curRoom.CreateMapTiles();
 	}

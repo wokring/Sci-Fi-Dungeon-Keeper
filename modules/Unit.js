@@ -1,5 +1,82 @@
-import { MobManager } from '../modules/MobManager.js'
+import {mobManager} from './MobManager.js'
+import {PathHelper} from './PathHelper.js'
+
+const MOBSTATE_UNKNOWN = 0
+const MOBSTATE_PATHING = 1;
+
 class Unit {
+	constructor(scene, startDungeonRoom)
+	{
+		this.makeSprite()
+		scene.add(this.plane)
+		this.mobState = MOBSTATE_UNKNOWN;
+		this.currentPath = new Array();
+		this.dungeonRoom = startDungeonRoom;
+		//console.log(startDungeonRoom);
+		this.setPosition(startDungeonRoom.getCentre());
+		this.nextPathTarget = null;
+		this.maxSpeed = 0.3;
+		//this.plane = null;
+	}
+	PathToTreasure()
+	{
+		//console.log("PathToTreasure()");
+		this.mobState = MOBSTATE_PATHING;
+		this.currentPath = PathHelper.GetPathToTreasure(this.dungeonRoom);
+		this.nextPathTarget = this.currentPath[0];
+		
+	}
+	PathToEntrance()
+	{
+		this.mobState = MOBSTATE_PATHING;
+		this.currentPath = PathHelper.GetPathToEntrance(this.dungeonRoom);
+	}
+	Update(deltaTime)
+	{
+		switch(this.mobState)
+		{
+			case MOBSTATE_PATHING:
+			{
+				//get the angle between two points
+				//var currentAngle = this.dungeonRoom.getAngle(this.nextPathTarget);
+				/*var moveVector = this.nextPathTarget.getCentre().sub(this.dungeonRoom.getCentre());
+				console.log(this.dungeonRoom.getCentre().distanceToSquared(this.nextPathTarget.getCentre()));
+				moveVector.normalize();
+				moveVector.multiplyScalar(deltaTime, this.maxSpeed);*/
+				this.plane.position.y -= this.maxSpeed * deltaTime;
+				//console.log(this.dungeonRoom.getCentre().distanceToSquared(this.nextPathTarget.getCentre())	);
+				if(this.dungeonRoom.getCentre().distanceToSquared(this.nextPathTarget.getCentre()) <= 0.1)
+				{
+					//console.log("reached dest " + this.nextPathTarget.plane.position.y);
+					if(this.currentPath.length > 0)
+					{
+						this.dungeonRoom = this.nextPathTarget;
+						this.nextPathTarget = this.currentPath.shift();
+					}
+					else
+					{
+						this.mobState = MOBSTATE_UNKNOWN;
+					}
+				}
+				break;
+			}
+		}
+	}
+	getPosition()
+	{
+		return new THREE.Vector2(this.plane.position.x, this.plane.position.y);
+	}
+	setPosition(value) {
+		//this._position = value;
+		this.plane.position.x = value.x;
+		this.plane.position.y = value.y;
+	}
+	makeSprite() {
+		const geometry = new THREE.PlaneGeometry( 0.2, 0.2 );
+		const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+		this.plane = new THREE.Mesh( geometry, material );
+	}
+    /*
     constructor(cost, health, damage, interval, speed, range, scene, room = [0,1], pos = [0,0], level = 1) {
         this.cost = cost
         this._health = health
@@ -18,6 +95,8 @@ class Unit {
         scene.add(this.plane)
         this.setPosition()
     }
+        */
+        /*
     get speed() {
         return this._speed * this.debuff[0];
     }
@@ -52,20 +131,10 @@ class Unit {
     set damage(value) {
         this._damage = value / (2^(this.level - 1));
     }
-    setPosition(value) {
-        this._position = value;
-        this.plane.position.x = this.position[0];
-        this.plane.position.y = this.position[1];
-    }
-    makeSprite() {
-        const geometry = new THREE.PlaneGeometry( 0.2, 0.2 );
-        const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-        this.plane = new THREE.Mesh( geometry, material );
-        
-    }
+    */
     getHit(damage, debuff = [1, 1]) {
         if (this.damage - damage <= 0) {
-            MobManager.getInstance().killUnit(this)
+            mobManager.killUnit(this)
         } else {
             this.damage -= damage;
         }
@@ -118,4 +187,4 @@ class EnemyUnit extends Unit {
     }
 }
 
-export {Unit, EnemyUnit}
+export {Unit, EnemyUnit};
