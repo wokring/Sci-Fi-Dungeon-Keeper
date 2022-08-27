@@ -1,5 +1,4 @@
 import {DungeonRoom} from "./DungeonRoom.js"
-import {MapTile} from "./MapTile.js"
 
 const DungeonRooms = []; 
 const DUNGEON_HEIGHT = 8;
@@ -8,6 +7,33 @@ const WORLD_MIN_X = -3.5;
 const WORLD_MIN_Y = -3.5;
 const WORLD_MAX_X = 3.5;
 const WORLD_MAX_Y = 3.5;
+var DungeonFactory = (function(){
+	class Dungeon {
+		constructor() {
+			this.rooms = BuildDungeon();
+		}
+		getRoom(position) {
+			return this.rooms[position[0]][position[1]]
+		}
+		addUnit(unit, position) {
+			unit.room = position;
+			// when the room coordas are defined, change position to the entrance the unit came from
+			this.rooms[position[0]][position[1]].units.push(unit);
+		}
+	}
+  
+	var instance;
+  
+	return {
+	  getInstance: function(){
+		if (!instance) {
+		  instance = new Dungeon();
+		  delete instance.constructor;
+		}
+		return instance;
+	  }
+	};
+  })();
 
 function BuildDungeon()
 {	
@@ -19,6 +45,7 @@ function BuildDungeon()
 			let dungeonIndex = new THREE.Vector2(i,j);
 			const newRoom = new DungeonRoom(dungeonIndex);
 			DungeonRooms[i].push(newRoom);
+		return DungeonRooms
 		}
 	}
 	
@@ -39,7 +66,7 @@ function BuildDungeon()
 	}
 }
 
-export {BuildDungeon, DungeonRooms, 
+export {BuildDungeon, DungeonRooms, DungeonFactory,
 	WORLD_MIN_X, 
 	WORLD_MIN_Y,
 	WORLD_MAX_X,

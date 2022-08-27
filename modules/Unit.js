@@ -1,17 +1,19 @@
+import { MobManager } from '../modules/MobManager.js'
 class Unit {
     constructor(cost, health, damage, interval, speed, range, room, pos = [0,0], level = 1) {
-        this.cost = cost;
-        this._health = health;
-        this._damage = damage;
-        this.interval = interval;
-        this._speed = speed;
-        this._range = range;
-        this.level = level;
-        this.position = pos; // relative positon of unit in the room;
-        this.room = room; //this is the current node of the unit.c
-        this.debuff = [1,1];
+        this.cost = cost
+        this._health = health
+        this._damage = damage
+        this.interval = interval
+        this._speed = speed
+        this._range = range
+        this.level = level
+        this.position = pos // relative positon of unit in the room
+        this.room = room //this is the current node of the unit.c
+        this.debuff = [1,1]
+        this.fighting = false
+        this.cooldown = 0
     }
-
     get speed() {
         return this._speed * this.debuff[0];
     }
@@ -43,14 +45,21 @@ class Unit {
     }
     getHit(damage, debuff = [1, 1]) {
         if (this.damage - damage <= 0) {
-            this.damage = 0;
+            MobManager.getInstance().killUnit(this)
         } else {
             this.damage -= damage;
         }
         this.debuff = debuff;
     }
     resetDebuff() {
-        this.debuff = [1, 1];
+        this.debuff = [1, 1]
+    }
+    finishFight() {
+        this.resetDebuff()
+        this.fighting = false
+    }
+    connectedHit() {
+        this.cooldown = this.interval * 1000
     }
 }
 
