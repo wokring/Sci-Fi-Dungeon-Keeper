@@ -1,4 +1,4 @@
-import {DungeonRooms} from "./DungeonLayout.js"
+import {DungeonRooms, update_dist} from "./DungeonLayout.js"
 import {DungeonRoom} from "./DungeonRoom.js"
 import {MapTile} from "./MapTile.js"
 import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
@@ -43,7 +43,10 @@ function UIBuildRoom(buildType, quantizedWorldCoords)
 		return false;
 	}
 	chosenRoom.CreateMapTiles();
+
+	update_dist()
 	return true;
+
 }
 
 function CanBuild(tryRoom)
