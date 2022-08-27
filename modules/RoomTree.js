@@ -1,20 +1,18 @@
-import BuildDungeon from "./DungeonRoom.js";
+// import BuildDungeon from "./DungeonRoom.js";
 
-const direction = {
-    up: 0,
-    down: 1,
-    left: 2,
-    right: 3
-};
+// const direction = 
+//     up: 0,
+//     down: 1,
+//     left: 2,
+//     right: 3
+// };
+
+const up = 0;
+const down = 1;
+const left = 2;
+const right = 3;
 
 class RoomNode {
-    const children = {
-        up: null,
-        down: null,
-        left = null,
-        right = null
-    };
-
     constructor(parent, height, width, data, level, gen) {
         this.parent = parent;
         this.height = height;
@@ -22,6 +20,10 @@ class RoomNode {
         this.data = data;
         this.level = level
         this.gen = gen;
+        this.left = null;
+        this.right = null;
+        this.up = null;
+        this.down = null;
     }
 
     get neighbours() {
@@ -29,42 +31,42 @@ class RoomNode {
     }
 
     addRoom(grid, dir, data) {
-        if (dir == direction.up) {
+        if (dir == up) {
             if (this.level - 1 < 0) {
                 console.error("Out of grid upwards.");
                 return null;
             }
 
-            this.children.up = new RoomNode(this, this.height, this.width, data, this.level-1, this.gen);
-            grid[this.level-1][this.gen] = this.children.up;
-            return this.children.up;
-        } else if (dir == direction.down) {
+            this.up = new RoomNode(this, this.height, this.width, data, this.level-1, this.gen);
+            grid[this.level-1][this.gen] = this.up;
+            return this.up;
+        } else if (dir == down) {
             if (this.level + 1 > grid.length - 1) {
                 console.error("Out of grid downwards.");
                 return null;
             }
 
-            this.children.down = new RoomNode(this, this.height, this.width, data, this.level+1, this.gen);
-            grid[this.level+1][this.gen] = this.children.down;
-            return this.children.down;
-        } else if (dir == direction.left) {
+            this.down = new RoomNode(this, this.height, this.width, data, this.level+1, this.gen);
+            grid[this.level+1][this.gen] = this.down;
+            return this.down;
+        } else if (dir == left) {
             if (this.gen - 1 < 0) {
                 console.error("Out of grid leftwards.");
                 return null;
             }
 
-            this.children.left = new RoomNode(this, this.height, this.width, data, this.level, this.gen-1);
-            grid[this.level][this.gen-1] = this.children.left;
-            return this.children.left;
-        } else if (dir== direction.right) {
+            this.left = new RoomNode(this, this.height, this.width, data, this.level, this.gen-1);
+            grid[this.level][this.gen-1] = this.left;
+            return this.left;
+        } else if (dir == right) {
             if (this.gen + 1 > grid[0].length - 1) {
                 console.error("Out of grid rightwards.");
                 return null;
             }
 
-            this.children.right = new RoomNode(this, this.height, this.width, data, this.level, this.gen+1);
-            grid[this.level][this.gen+1] = this.children.right;
-            return this.children.right;
+            this.right = new RoomNode(this, this.height, this.width, data, this.level, this.gen+1);
+            grid[this.level][this.gen+1] = this.right;
+            return this.right;
         } else {
             console.error(`Not valid direction specified ${dir}`);
             return null;
@@ -125,4 +127,4 @@ class RoomTree {
 }
 
 export default RoomTree;
-export { RoomNode, direction };
+export { RoomNode };
