@@ -1,4 +1,4 @@
-import RoomTree, { RoomNode, direction } from "../modules/RoomTree.js" 
+import { RoomTree, RoomNode, direction } from "../modules/RoomTree.js" 
 import BuildDungeon from "../modules/DungeonLayout.js"
 import CreateWorld from "../modules/CreateWorld.js"
 import MapTile from "../modules/MapTile.js"

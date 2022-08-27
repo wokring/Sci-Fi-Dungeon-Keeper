@@ -188,6 +188,62 @@ class RoomTree {
         this.preOrder(this.root, preOrderArray);
         return preOrderArray[Math.floor(Math.random() * preOrderArray.length)];
     }
+
+    maxDepth() {
+        let maxDepth = 0;
+        const queue = [[this.root, 1]];
+        const visited = new Set([]);
+
+        while (Array.isArray(queue) && queue.length) {
+            let [node, depth] = queue.shift();
+            maxDepth = Math.max(depth, maxDepth);
+
+            if (!visited.has(node)) {
+                visited.add(node);
+
+                for (let child in node.neighbours) {
+
+                    if (child != null && !visited.has(child)) {
+                        visited.add(child);
+                        queue.push([child, depth+1]);
+                    }
+                }
+            }
+        }
+
+        return maxDepth;
+    }
+
+    getRandomNode(start) {
+        let length = Math.floor(Math.random * maxDepth());
+        let distance = 0;
+        const stack = [start];
+        const visited = new Set([]);
+        const path = [start];
+
+        while (Array.isArray(stack) && stack.length) {
+            let node = stack.pop();
+
+            if (distance == length) {
+                return path;
+            }
+
+            if (!visited.has(node)) {
+                visited.add(node);
+                let nodes = [...node.neighbours, node.parent];
+                let direction = Math.floor(Math.random() * 5);
+                let n = nodes[direction];
+
+                if (n != null && !visited.has(n)) {
+                    visited.add(n);
+                    queue.push(n);
+                    path.push(n);
+                }
+            }
+
+            distance += 1;
+        }
+    }
 }
 
 export { RoomTree, RoomNode, direction };
