@@ -177,6 +177,81 @@ class RoomTree {
             distance += 1;
         }
     }
+
+    heuristic() {
+        return Math.round(Math.random());
+    }
+
+    a_star(start, end) {
+        if (start === end) {
+            return [];
+        }
+        let frontier = [[start.cost, start]];
+        let explored = new Map();
+        explored.set(start, start.cost)
+
+        while(frontier.length != 0) {
+            let nodeSet = frontier.shift();
+            let node = nodeSet[1];
+            
+            for(let child in node.neighbours) {
+                let cost_of_child = child.cost;
+
+                if (child === end) {
+                    let returnList = [child];
+                    let next_node = child.parent;
+                    while(next_node !== start) {
+                        returnList.unshift(next_node);
+                        next_node = next_node.parent
+                    }
+                    return returnList;
+                }
+
+                if (!explored.has(child) || (explored.has(child) && explored.get(child) > cost_of_child)) {
+                    explored[child] = cost_of_child;
+                    frontier.push([cost_of_child, child])
+                }
+
+                frontier.sort((a, b) => {
+                    if (a[0] < b[0]) {
+                        return 1;
+                    } else if (a[0] == b[0]) {
+                        return 0;
+                    } else {
+                        return -1;
+                    }
+                })
+            }
+        }
+    }
+
+    treemaker(start, end) {
+        let direction_y = 1;
+        let direction_x = 1;
+        if (end[0] - start[0] < 0) {
+            direction = -1;
+        }
+        if (end[1] - start[1] < 0) {
+            direction = -1;
+        }
+        
+        var parent = this.root;
+        for(let i = start[0]; i != end[0]; i = i + direction_y) {
+            let dir = 1;
+            if (direction_y < 0) {
+                dir =  0;
+            }
+            parent = parent.addRoom(this.grid, dir, null);
+        }
+
+        for(let i = start[1]; i != end[1]; i = i + direction_x) {
+            let dir = 3;
+            if (direction_x < 0) {
+                dir =  2;
+            }
+            parent = parent.addRoom(this.grid, dir, null);
+        }
+    }
 }
 
 export default RoomTree;
