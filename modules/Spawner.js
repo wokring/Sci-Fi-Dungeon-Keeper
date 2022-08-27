@@ -1,4 +1,6 @@
 import {Unit} from "../modules/Unit.js"
+import {MobManager} from "../modules/MobManager.js";
+import {scene} from "../src/main.js"
 
 class Spawner{
     constructor(room, unitTemplate, spawnSpan, spawnLimit) {
@@ -45,7 +47,8 @@ class Spawner{
         //Check it reach spawn limit or not
         if (this._spawnLimit - this._units.length > 0) {
             //console.log(this._template);
-            let mob = new Unit(...this._template);
+            // let mob = new Unit(...this._template);
+            let mob = MobManager.getInstance().createMob(new Unit(10,10,10,1,1,1,scene,[0,1],[3,5]));
             //console.log(mob);
             this._units.push(mob);
             return mob;

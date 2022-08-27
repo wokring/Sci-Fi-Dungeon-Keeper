@@ -82,30 +82,30 @@ class Unit {
         this.cooldown = this.interval * 1000
     }
     doCombat(d_time) {
-        var mob_manager = MobManager.getInstance()
-        var unit_index = mob_manager.getUnit(this)
-        let [enemy, x, y, vector] = mob_manager.getClosest(this)
-        if (enemy === null) {
-            mob_manager.mobs[unit_index].finishFight()
-            return
-        } else {
-            mob_manager.mobs[unit_index].fighting = true
-        }
-        console.log(enemy)
-        if (vector <= (this.range)) {
-            if (this.debuff != null) {
-                mob_manager.mobs[enemy].getHit(this.damage, this.debuff);
-            } else {
-                mob_manager.mobs[enemy].getHit(this.damage);
-            }
-            mob_manager.mobs[unit_index].connectedHit()                   
-        } else {
-            mob_manager.mobs[unit_index].position[0] += (x/vector) * this_unit.speed * MOVEMENT_CONSTANT * d_time;
-            mob_manager.mobs[unit_index].position[1] += (y/vector) * this_unit.speed * MOVEMENT_CONSTANT * d_time;
-            mob_manager.mobs[unit_index].setPosition()
-        }
-        console.log(this)
-        return true;
+        // var mob_manager = MobManager.getInstance()
+        // var unit_index = mob_manager.getUnit(this)
+        // let [enemy, x, y, vector] = mob_manager.getClosest(this)
+        // if (enemy === null) {
+        //     mob_manager.mobs[unit_index].finishFight()
+        //     return
+        // } else {
+        //     mob_manager.mobs[unit_index].fighting = true
+        // }
+        // console.log(enemy)
+        // if (vector <= (this.range)) {
+        //     if (this.debuff != null) {
+        //         mob_manager.mobs[enemy].getHit(this.damage, this.debuff);
+        //     } else {
+        //         mob_manager.mobs[enemy].getHit(this.damage);
+        //     }
+        //     mob_manager.mobs[unit_index].connectedHit()
+        // } else {
+        //     mob_manager.mobs[unit_index].position[0] += (x/vector) * this_unit.speed * MOVEMENT_CONSTANT * d_time;
+        //     mob_manager.mobs[unit_index].position[1] += (y/vector) * this_unit.speed * MOVEMENT_CONSTANT * d_time;
+        //     mob_manager.mobs[unit_index].setPosition()
+        // }
+        // console.log(this)
+        // return true;
     }
     
 }

@@ -24,7 +24,7 @@ function init(){
     bar.position.y += -4;
     bar.position.z += 3;
     gui[1] = bar;
-    
+    MobManager.getInstance().init(scene);
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -160,24 +160,17 @@ function main() {
     	CreateWorld();
     
 	if (WebGL.isWebGLAvailable()) {
-		var mm = MobManager.getInstance()
-		mm.createMob(new Unit(10,10,10,1,1,1,scene,[0,1],[-1,3]))
-		mm.createMob(new Unit(10,10,10,1,1,1,scene,[0,1],[3,5]))
+		// var mm = MobManager.getInstance()
+		// mm.createMob(new Unit(10,10,10,1,1,1,scene,[0,1],[-1,3]))
+		// mm.createMob(new Unit(10,10,10,1,1,1,scene,[0,1],[3,5]))
 		animate()
 	} else {
 		const warning = WebGL.getWebGLErrorMessage();
 		document.getElementById("container").appendChild(warning);
 	}
-    const room1 = "room1";
-    const room2 = "room2";
-    const info1 = [1, 2, 3, 4, 5, 6, room1, [0,0],1];
-    const info2 = [1, 2, 3, 4, 5, 6, room2, [0,0],1];
-    const s1 = new Spawner(room1,info1, 5, 2);
-    const s2 = new Spawner(room2,info2, 2, 3);
-    const manager = new SpawnManager();
-    manager.addSpawn(s1);
-    manager.addSpawn(s2);
+
 }
 
 
 window.onload = main;
+export {scene}
