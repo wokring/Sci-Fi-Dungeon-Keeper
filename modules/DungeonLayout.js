@@ -14,4 +14,4 @@ function BuildDungeon() {
 	}
 }
 
-export BuildDungeon;
+export default BuildDungeon;

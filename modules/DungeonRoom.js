@@ -1,6 +1,5 @@
-
-class DungeonRoom
-{
+class DungeonRoom {
+    constructor() {}
 }
 
-export default {DungeonRoom};
+export default DungeonRoom;

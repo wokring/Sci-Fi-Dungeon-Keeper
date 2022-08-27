@@ -1,4 +1,3 @@
-
 //static bitflag defines for our directions
 const NORTH = 1;
 const SOUTH = 2;
@@ -121,4 +120,4 @@ class MapTile
 	}
 }
 
-export { MapTile };
+export default MapTile;
