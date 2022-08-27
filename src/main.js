@@ -2,6 +2,7 @@ import { RoomTree, RoomNode } from "../modules/RoomTree.js"
 import { CreateWorld } from "../modules/create_world.js"
 import { MapTile } from "../modules/MapTile.js"
 import WebGL from "../js/WebGL.js";
+import {Spawner, SpawnManager} from "../modules/Spawner.js";
 
 const frustumSize = 10;
 let camera,aspect,scene,renderer,gui;
@@ -122,7 +123,19 @@ function main() {
     scene.add(cube2);
     MapTile.scene = scene;
     CreateWorld();
-    
+
+    const room1 = "room1";
+    const room2 = "room2";
+    const info1 = [1, 2, 3, 4, 5, 6, room1, [0,0],1];
+    const info2 = [1, 2, 3, 4, 5, 6, room2, [0,0],1];
+    const s1 = new Spawner(room1,info1, 5, 2);
+    const s2 = new Spawner(room2,info2, 2, 3);
+    const manager = new SpawnManager();
+    manager.addSpawn(s1);
+    manager.addSpawn(s2);
+
+
+
     if (WebGL.isWebGLAvailable()) {
         cube2.position.x = -2
         cube2.position.y = -2
