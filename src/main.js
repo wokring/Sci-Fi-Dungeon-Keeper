@@ -1,5 +1,6 @@
-import RoomTree, { RoomNode } from "../modules/RoomTree.js" 
-import CreateWorld from "../modules/create_world.js"
+import RoomTree, { RoomNode, direction } from "../modules/RoomTree.js" 
+import buildDungeon from "../modules/DungeonLayout.js"
+import CreateWorld from "../modules/CreateWorld.js"
 import MapTile from "../modules/MapTile.js"
 import WebGL from "../js/WebGL.js";
 import {Spawner, SpawnManager} from "../modules/Spawner.js";
@@ -144,6 +145,12 @@ function main() {
         const warning = WebGL.getWebGLErrorMessage();
         document.getElementById("container").appendChild(warning);
     }
+
+    const grid = buildDungeon();
+    const roomTree = new RoomTree(5, 5, grid);
+    roomTree.makeRoot(3, 4);
+    roomTree.root.addRoom(grid, direction.up, null);
+    console.log(roomTree.maxDepth());
 }
 
 
