@@ -163,6 +163,7 @@ function main() {
 		// var mm = MobManager.getInstance()
 		// mm.createMob(new Unit(10,10,10,1,1,1,scene,[0,1],[-1,3]))
 		// mm.createMob(new Unit(10,10,10,1,1,1,scene,[0,1],[3,5]))
+
 		animate()
 	} else {
 		const warning = WebGL.getWebGLErrorMessage();
