@@ -173,6 +173,20 @@ function main() {
     const manager = new SpawnManager();
     manager.addSpawn(s1);
     manager.addSpawn(s2);
+    if (WebGL.isWebGLAvailable()) {
+        cube2.position.x = -2
+        cube2.position.y = -2
+        animate();
+    } else {
+        const warning = WebGL.getWebGLErrorMessage();
+        document.getElementById("container").appendChild(warning);
+    }
+
+    const grid = buildDungeon();
+    const roomTree = new RoomTree(5, 5, grid);
+    roomTree.makeRoot(3, 4);
+    roomTree.root.addRoom(grid, direction.up, null);
+    console.log(roomTree.maxDepth());
 }
 
 
