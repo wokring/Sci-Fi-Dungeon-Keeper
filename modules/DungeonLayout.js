@@ -1,5 +1,8 @@
 import {DungeonRoom} from "./DungeonRoom.js"
-import {MapTile} from "./MapTile.js"
+import {Spawner, SpawnManager} from "../modules/Spawner.js";
+
+
+
 
 const DungeonRooms = []; 
 const DUNGEON_HEIGHT = 8;
@@ -8,6 +11,35 @@ const WORLD_MIN_X = -3.5;
 const WORLD_MIN_Y = -3.5;
 const WORLD_MAX_X = 3.5;
 const WORLD_MAX_Y = 3.5;
+var DungeonFactory = (function(){
+	class Dungeon {
+		constructor() {
+			this.rooms = BuildDungeon();
+			this.units = [];
+		}
+		getRoom(position) {
+			return this.rooms[position[0]][position[1]]
+		}
+		addUnit(unit, position) {
+			unit.room = position;
+			// when the room coordas are defined, change position to the entrance the unit came from
+			this.rooms[position[0]][position[1]].units.push(unit);
+			this.units.push(unit);
+		}
+	}
+  
+	var instance;
+  
+	return {
+	  getInstance: function(){
+		if (!instance) {
+		  instance = new Dungeon();
+		  delete instance.constructor;
+		}
+		return instance;
+	  }
+	};
+  })();
 
 function BuildDungeon()
 {	
@@ -37,9 +69,20 @@ function BuildDungeon()
 		}
 		curRoom.CreateMapTiles();
 	}
+
+	var myRoom = DungeonRooms[0][1];
+	const template = [10,10,10,1,1,1,null,[0,1],[-1,3]]
+	var mySpawner = new Spawner(myRoom, template, 2, 5);
+	var manager = new SpawnManager();
+	manager.addSpawn(mySpawner);
+
+	return DungeonRooms
 }
 
-export {BuildDungeon, DungeonRooms, 
+
+
+
+export {BuildDungeon, DungeonRooms, DungeonFactory,
 	WORLD_MIN_X, 
 	WORLD_MIN_Y,
 	WORLD_MAX_X,

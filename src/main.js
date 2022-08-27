@@ -7,6 +7,9 @@ import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/Dung
 import WebGL from "../js/WebGL.js";
 import {Spawner, SpawnManager} from "../modules/Spawner.js";
 import { Trap } from "../modules/Trap.js"
+import { MobManager } from "../modules/MobManager.js"
+import { Unit } from "../modules/Unit.js"
+
 
 const ROOM_COSTP = [1000,5,3,4,1,2,3,4,5,100]
 const ROOM_COSTC = [1000,10,3,4,3,2,3,4,5,50]
@@ -14,6 +17,7 @@ let camera,aspect,scene,renderer,gui,ghostPlane;
 let CP_ctx,PT_ctx,CP_t,PT_t;
 const plane05_1 = new THREE.PlaneGeometry( 1, 0.5 );
 
+const CLOCK = new THREE.Clock()
 const CAMERA_HIDDEN_Z = 100;
 const GHOST_BUILD_Z = 3;
 const frustumSize = 10;
@@ -253,3 +257,4 @@ function main() {
 }
 
 window.onload = main;
+export {scene}
