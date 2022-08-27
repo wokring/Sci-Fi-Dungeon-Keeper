@@ -1,5 +1,6 @@
 import {MapTile} from "./MapTile.js"
 import {WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y,DungeonRooms} from "../modules/DungeonLayout.js"
+import { scene } from "../src/main.js";
 
 const NORTH = 1;
 const SOUTH = 2;
@@ -30,45 +31,56 @@ class DungeonRoom
 	{
 		//play sfx for build success
 		this.isBuilt = true;
-		new MapTile(SOUTH|WEST,new THREE.Vector2(
-			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
-			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
-		new MapTile(WEST, 	new THREE.Vector2(
-			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
-			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 1), FLOOR_C);
-		new MapTile(WEST, 	new THREE.Vector2(
-			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
-			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 3), FLOOR_D);
+		const room_tex = new THREE.TextureLoader().load( '../sprites/room.png' );
+		room_tex.magFilter = THREE.NearestFilter
+        const room_mt= new THREE.MeshBasicMaterial({ map: room_tex });
+        room_mt.transparent = true;
+        const plane = new THREE.PlaneGeometry(1, 1);
+        const room = new THREE.Mesh(plane, room_mt);
+        room.position.x = this.myWorldCoords.x;
+        room.position.y = this.myWorldCoords.y;
+        room.position.z = -1;
+        this.sprite = room;
+		scene.add(this.sprite);
+		// new MapTile(SOUTH|WEST,new THREE.Vector2(
+		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
+		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
+		// new MapTile(WEST, 	new THREE.Vector2(
+		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
+		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 1), FLOOR_C);
+		// new MapTile(WEST, 	new THREE.Vector2(
+		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
+		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 3), FLOOR_D);
 		
-		new MapTile(NORTH|WEST,new THREE.Vector2(
-			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
-			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
-		new MapTile(NORTH,	new THREE.Vector2(
-			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 1, 
-			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
-		new MapTile(NORTH, 	new THREE.Vector2(
-			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 3, 
-			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
+		// new MapTile(NORTH|WEST,new THREE.Vector2(
+		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
+		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
+		// new MapTile(NORTH,	new THREE.Vector2(
+		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 1, 
+		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
+		// new MapTile(NORTH, 	new THREE.Vector2(
+		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 3, 
+		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
 		
-		new MapTile(NORTH|EAST,new THREE.Vector2(
-			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
-			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
-		new MapTile(EAST, 	new THREE.Vector2(
-			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
-			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 3), FLOOR_A);
-		new MapTile(EAST, 	new THREE.Vector2(
-			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
-			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 1), FLOOR_B);
+		// new MapTile(NORTH|EAST,new THREE.Vector2(
+		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
+		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
+		// new MapTile(EAST, 	new THREE.Vector2(
+		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
+		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 3), FLOOR_A);
+		// new MapTile(EAST, 	new THREE.Vector2(
+		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
+		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 1), FLOOR_B);
 		
-		new MapTile(SOUTH|EAST,new THREE.Vector2(
-			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
-			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
-		new MapTile(SOUTH, 	new THREE.Vector2(
-			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 3, 
-			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
-		new MapTile(SOUTH, 	new THREE.Vector2(
-			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 1, 
-			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
+		// new MapTile(SOUTH|EAST,new THREE.Vector2(
+		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
+		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
+		// new MapTile(SOUTH, 	new THREE.Vector2(
+		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 3, 
+		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
+		// new MapTile(SOUTH, 	new THREE.Vector2(
+		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 1, 
+		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
 	}
 	getCentre()
 	{

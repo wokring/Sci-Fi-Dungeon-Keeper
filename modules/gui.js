@@ -24,8 +24,8 @@ const CAMERA_HIDDEN_Z = 100;
 const GHOST_BUILD_Z = 3;
 const frustumSize = 10;
 
-var power = 100;
-var circuit = 20;
+var power = 1000;
+var circuit = 200;
 
 // var ROOM_COSTP = 10
 // var ROOM_COSTC = 2
@@ -85,6 +85,7 @@ function init_gui(){
 
     const icon = new THREE.PlaneGeometry(0.5, 0.5);
     const CB_tex = new THREE.TextureLoader().load( '../sprites/circuit_board.png' );
+    CB_tex.magFilter = THREE.NearestFilter
     const CB_mt = new THREE.MeshBasicMaterial({ map: CB_tex });
     CB_mt.transparent = true;
     const circuit_board = new THREE.Mesh(icon, CB_mt);
@@ -93,6 +94,7 @@ function init_gui(){
     circuit_board.position.z= 3;
 
     const PT_tex = new THREE.TextureLoader().load( '../sprites/power_thing.png' );
+    PT_tex.magFilter = THREE.NearestFilter
     const PT_mt= new THREE.MeshBasicMaterial({ map: PT_tex });
     PT_mt.transparent = true;
     const power_thing = new THREE.Mesh(icon, PT_mt);
@@ -132,8 +134,9 @@ function onDocumentMouseDown( event ) {
 	{
 
         if (power >= ROOM_COSTP[buildType] && circuit >= ROOM_COSTC[buildType] && buildType > 0){
-            var x = mx-WORLD_MIN_X-0.5;
-            var y = my-WORLD_MIN_Y-0.5;
+
+            var x = mx-WORLD_MIN_X;
+            var y = my-WORLD_MIN_Y;
             var buildSuccess = false;
             switch(buildType){
                 case 1:
@@ -142,7 +145,6 @@ function onDocumentMouseDown( event ) {
                 case 4:
                     if (DungeonRooms[x][y].isBuilt && DungeonRooms[x][y].trap == null){
                         DungeonRooms[x][y].trap = new Trap(10,5,x -3 ,y -3);
-
                         scene.add(DungeonRooms[x][y].trap.sprite)
                         buildSuccess = true;
                     }
@@ -175,21 +177,21 @@ function onDocumentMouseMove(event) {
 	my = Math.ceil(camera.position.y + -frustumSize *((event.clientY/window.innerHeight)*2 -1) * 0.5 - 0.4);
 	
 	//boundary checks
-	if(mx < WORLD_MIN_X+0.5)
+	if(mx < WORLD_MIN_X)
 	{
-		mx = WORLD_MIN_X+0.5;
+		mx = WORLD_MIN_X;
 	}
-	else if(mx > WORLD_MAX_X+0.5)
+	else if(mx > WORLD_MAX_X)
 	{
-		mx = WORLD_MAX_X+0.5;
+		mx = WORLD_MAX_X;
 	}
-	if(my < WORLD_MIN_Y+0.5)
+	if(my < WORLD_MIN_Y)
 	{
-		my = WORLD_MIN_Y+0.5;
+		my = WORLD_MIN_Y;
 	}
-	else if(my > WORLD_MAX_Y+0.5)
+	else if(my > WORLD_MAX_Y)
 	{
-		my = WORLD_MAX_Y+0.5;
+		my = WORLD_MAX_Y;
 	}
 
 	//click and drag the map around

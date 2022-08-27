@@ -61,43 +61,6 @@ MapTile.dirLookupFloorIndex.set("" + FLOOR_C,new THREE.Vector2(33,21));
 MapTile.dirLookupFloorIndex.set("" + FLOOR_D,new THREE.Vector2(34,21));
 
 
-//check we get the expected values
-//console.log(SOUTH|WEST);
-//console.log(MapTile.dirLookupTileIndex);
-
-//unused
-//MapTile.dirLookupTileDims.set("" + NORTH,new THREE.Vector2(32,32));
-
-//create some test map tiles
-/*
-new MapTile(NORTH, new THREE.Vector2(-2, 1));
-new MapTile(SOUTH, new THREE.Vector2(-1, 1));
-new MapTile(EAST, new THREE.Vector2(0, 1));
-new MapTile(WEST, new THREE.Vector2(1, 1));
-//
-new MapTile(SOUTH|WEST, new THREE.Vector2(-2, 0));
-new MapTile(NORTH|WEST, new THREE.Vector2(-1, 0));
-new MapTile(SOUTH|EAST, new THREE.Vector2(0, 0));
-new MapTile(NORTH|EAST, new THREE.Vector2(1, 0));
-*/
-
-//create some test maptiles in the shape of a room
-function CreateTestRoom()
-{
-	new MapTile(NORTH|WEST, new THREE.Vector2(-2, 2));
-	new MapTile(NORTH, new THREE.Vector2(-1, 2));
-	new MapTile(NORTH, new THREE.Vector2(1, 2));
-	new MapTile(NORTH|EAST, new THREE.Vector2(2, 2));
-	new MapTile(EAST, new THREE.Vector2(2, 1), FLOOR_A);
-	new MapTile(EAST, new THREE.Vector2(2, -1), FLOOR_B);
-	new MapTile(SOUTH|EAST, new THREE.Vector2(2, -2));
-	new MapTile(SOUTH, new THREE.Vector2(1, -2));
-	new MapTile(SOUTH, new THREE.Vector2(-1, -2));
-	new MapTile(SOUTH|WEST, new THREE.Vector2(-2, -2));
-	new MapTile(WEST, new THREE.Vector2(-2, -1), FLOOR_C);
-	new MapTile(WEST, new THREE.Vector2(-2, 1), FLOOR_D);
-}
-
 function CreateWorld()
 {
 	//CreateTestRoom();

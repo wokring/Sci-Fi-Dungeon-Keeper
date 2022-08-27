@@ -5,22 +5,21 @@ class Trap {
         this.uses = uses;
         this.damage = damage;
         const mines_tex = new THREE.TextureLoader().load( '../sprites/mines.png' );
+        mines_tex.magFilter = THREE.NearestFilter
         const mines_mt= new THREE.MeshBasicMaterial({ map: mines_tex });
         mines_mt.transparent = true;
         const plane = new THREE.PlaneGeometry(1, 1);
         const mines = new THREE.Mesh(plane, mines_mt);
-        mines.position.x = x-0.1;
+        mines.position.x = x;
         mines.position.y = y;
         mines.position.z = 0;
         this.sprite = mines;
-
     }
     doHit(unit) {
         this.Uses -= 1;
-        if (this.uses){
+        if (this.uses > 0){
             unit.damage(this.damage);
         }
-        
     }
 }
 
