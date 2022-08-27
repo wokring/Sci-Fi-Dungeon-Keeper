@@ -24,7 +24,7 @@ function animate() {
         obj.position.y += y_diff * nvector * 0.01;
     }
     obj2.position.y += 0.01;
-    console.log(obj2.position.y)
+    //console.log(obj2.position.y)
     renderer.render(scene, camera);
 }
 
