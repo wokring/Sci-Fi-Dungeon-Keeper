@@ -1,7 +1,7 @@
 import {DungeonRoom} from "./DungeonRoom.js"
 import {MapTile} from "./MapTile.js"
 
-const DungeonRooms = new Array()
+const DungeonRooms = []; 
 const DUNGEON_HEIGHT = 10;
 const DUNGEON_WIDTH = 10;
 
@@ -17,9 +17,6 @@ function BuildDungeon()
 			DungeonRooms[i].push(newRoom);
 		}
 	}
-	//console.log(DungeonRooms);
-	
-	var myroom = DungeonRooms[6][3];
 }
 
-export { BuildDungeon };
+export BuildDungeon;
