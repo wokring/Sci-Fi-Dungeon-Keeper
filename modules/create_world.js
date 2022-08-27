@@ -21,7 +21,7 @@ tilesize: 32x32
 */
 
 //load the spritesheet for the walls
-const spriteImage = new THREE.ImageLoader().load('../sprites/Tech Dungeon Roguelite demo/tileset x1.png');
+const spriteImage = new THREE.ImageLoader().load('../sprites/tileset x1.png');
 const spriteSource = new THREE.Source(spriteImage);
 MapTile.wallSpriteSource = spriteSource;
 
