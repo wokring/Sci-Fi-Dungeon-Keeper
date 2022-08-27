@@ -20,7 +20,7 @@ class DungeonRoom
 		this.isBuilt = false;
         
 		this.unit = [];
-		this.trap = [];
+		this.trap = null;
 		this.spawn = [];
 		this.texture = [];
 	}
