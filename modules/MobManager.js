@@ -12,6 +12,12 @@ class MobManager {
 		//console.log("MobManager:init()");
 		this.createEntranceMob();
 	}
+	createMobAt(startRoom)
+	{
+		var newMob = new Unit(scene, startRoom);
+		this.allMobs.push(newMob);
+		//newMob.PathToTreasure();
+	}
 	createEntranceMob()
 	{
 		var newMob = new Unit(scene, PathHelper.entranceRoom);

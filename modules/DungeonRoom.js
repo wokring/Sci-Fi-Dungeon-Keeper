@@ -135,14 +135,14 @@ class DungeonRoom
 	onMobEnter(mob)
 	{
 		this.units_present.push(mob);
-		//console.log("maptile #" + this.id + " entered by mob #" + mob.id);
+		//console.log("maptile (" + this.myWorldCoords.x + "," + this.myWorldCoords.y + ") entered by mob #" + mob.id);
 	}
 	onMobExit(mob)
 	{
 		if(this.units_present.indexOf(mob) >= 0)
 		{
 			this.units_present.splice(this.units_present.indexOf(mob),1);
-			//console.log("maptile #" + this.id + " exited by mob #" + mob.id);
+			//console.log("maptile (" + this.myWorldCoords.x + "," + this.myWorldCoords.y + ") exited by mob #" + mob.id);
 		}
 	}
 }

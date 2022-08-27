@@ -1,8 +1,12 @@
 import {mobManager} from './MobManager.js'
 import {PathHelper} from './PathHelper.js'
+import {DungeonRooms} from "./DungeonLayout.js"
+import {WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y} from "../modules/DungeonLayout.js"
 
 const MOBSTATE_UNKNOWN = 0
 const MOBSTATE_PATHING = 1;
+const UNIT_SPRITE_WIDTH = 0.2;
+const UNIT_SPRITE_HEIGHT = 0.2;
 
 class Unit {
 	static nextId = 1;
@@ -15,22 +19,23 @@ class Unit {
 		this.currentPath = new Array();
 		this.dungeonRoom = startDungeonRoom;
 		//console.log(startDungeonRoom);
-		this.setPosition(startDungeonRoom.getCentre());
+		this.setPosition(startDungeonRoom.myWorldCoords);
+		startDungeonRoom.onMobEnter(this);
 		this.nextPathTarget = null;
 		this.maxSpeed = 1;
-		//this.plane = null;
 	}
 	PathToTreasure()
 	{
-		//console.log("PathToTreasure()");
 		this.mobState = MOBSTATE_PATHING;
 		this.currentPath = PathHelper.GetPathToTreasure(this.dungeonRoom);
 		this.nextPathTarget = this.currentPath[0];
+			
 	}
 	PathToEntrance()
 	{
 		this.mobState = MOBSTATE_PATHING;
 		this.currentPath = PathHelper.GetPathToEntrance(this.dungeonRoom);
+		this.nextPathTarget = this.currentPath[0];
 	}
 	Update(deltaTime)
 	{
@@ -38,37 +43,95 @@ class Unit {
 		{
 			case MOBSTATE_PATHING:
 			{
-				//get the angle between two points
-				//var currentAngle = this.dungeonRoom.getAngle(this.nextPathTarget);
-				/*var moveVector = this.nextPathTarget.getCentre().sub(this.dungeonRoom.getCentre());
-				console.log(this.dungeonRoom.getCentre().distanceToSquared(this.nextPathTarget.getCentre()));
+				//construct the movement vector
+				//console.log(this.nextPathTarget);
+				var currentMoveTarget = this.getCurrentMoveTarget();
+				var moveVector = new THREE.Vector2(currentMoveTarget.x - this.plane.position.x,
+					currentMoveTarget.y - this.plane.position.y);
 				moveVector.normalize();
-				moveVector.multiplyScalar(deltaTime, this.maxSpeed);*/
-				this.plane.position.y -= this.maxSpeed * deltaTime;
-				var sqrDist = this.getSqrdDist(this.nextPathTarget.getCentre());	
-				//console.log("sqrDist:" + sqrDist);
 				
-				if(sqrDist <= 0.01)
+				//move the mob
+				this.plane.position.x += moveVector.x * deltaTime * this.maxSpeed;
+				this.plane.position.y += moveVector.y * deltaTime * this.maxSpeed;
+				
+				//handle on mob entry and exit triggers
+				var curRoom = this.getQuantizedRoom();
+				if(curRoom != this.dungeonRoom)
 				{
 					this.dungeonRoom.onMobExit(this);
-					this.dungeonRoom = this.nextPathTarget;
+					this.dungeonRoom = curRoom;
 					this.dungeonRoom.onMobEnter(this);
+				}
+				
+				//how far to our next path node?
+				var sqrDist = this.getSqrdDist(currentMoveTarget);
+				//console.log("sqrDist to current target:" + sqrDist);
+				
+				//handle pathing
+				if(sqrDist <= 0.01)
+				{
+					this.invalidateCurrentMoveTarget();
+					currentMoveTarget = this.getCurrentMoveTarget();
 					
-					if(this.currentPath.length > 0)
+					//have we got more path nodes to get to?
+					if(currentMoveTarget != null)
 					{
-						this.nextPathTarget = this.currentPath.shift();
-						sqrDist = this.getSqrdDist(this.nextPathTarget.getCentre());
-						//console.log("nextPathTarget:" + this.nextPathTarget.id + " sqrDist:" + sqrDist);
+						sqrDist = this.getSqrdDist(currentMoveTarget);
+						/*console.log("arrived, next:" + currentMoveTarget.x + ","
+							+ currentMoveTarget.y
+							+ " sqrDist:" + sqrDist
+							+ " remaining:" + this.currentPath.length);*/
 					}
 					else
 					{
-						//console.log("finished pathing");
+						console.log("finished pathing");
 						this.mobState = MOBSTATE_UNKNOWN;
 					}
 				}
 				break;
 			}
 		}
+	}
+	getCurrentMoveTarget()
+	{
+		if(this.currentPath.length > 0)
+		{
+			return this.currentPath[0].myWorldCoords;
+		}
+	}
+	invalidateCurrentMoveTarget()
+	{
+		if(this.currentPath.length > 0)
+		{
+			this.currentPath.shift();
+		}
+	}
+	getQuantizedRoom()
+	{
+		var x = this.plane.position.x + UNIT_SPRITE_WIDTH/2;
+		if(x > WORLD_MAX_X)
+		{
+			x = WORLD_MAX_X;
+		}
+		else if(x < WORLD_MIN_X)
+		{
+			x = WORLD_MIN_X;
+		}
+		
+		var y = this.plane.position.y + UNIT_SPRITE_HEIGHT/2;
+		if(y > WORLD_MAX_Y)
+		{
+			y = WORLD_MAX_Y;
+		}
+		else if(y < WORLD_MIN_Y)
+		{
+			y = WORLD_MIN_Y;
+		}
+		
+		x = Math.floor(x - WORLD_MIN_X);
+		y = Math.floor(y - WORLD_MIN_Y);
+		//console.log(x + "," + y);
+		return DungeonRooms[x][y];
 	}
 	getSqrdDist(otherPos)
 	{
@@ -85,7 +148,7 @@ class Unit {
 		this.plane.position.y = value.y;
 	}
 	makeSprite() {
-		const geometry = new THREE.PlaneGeometry( 0.2, 0.2 );
+		const geometry = new THREE.PlaneGeometry(UNIT_SPRITE_WIDTH, UNIT_SPRITE_HEIGHT);
 		const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
 		this.plane = new THREE.Mesh( geometry, material );
 	}
