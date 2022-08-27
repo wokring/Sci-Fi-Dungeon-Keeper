@@ -1,6 +1,7 @@
 import {DungeonRoom} from "./DungeonRoom.js"
 import {Spawner, SpawnManager} from "../modules/Spawner.js";
 import {PathHelper} from "./PathHelper.js"
+import {scene} from "../src/main.js"
 
 
 
