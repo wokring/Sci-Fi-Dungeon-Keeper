@@ -3,7 +3,7 @@ import {DungeonRoom} from "./DungeonRoom.js"
 import {MapTile} from "./MapTile.js"
 import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
 
-function UIBuildRoom(quantizedWorldCoords)
+function UIBuildRoom(buildType, quantizedWorldCoords)
 {
 	//array safety checks
 	//console.log(quantizedWorldCoords);
@@ -12,25 +12,25 @@ function UIBuildRoom(quantizedWorldCoords)
 	{
 		console.log("Error: attempted to index " + quantizedWorldCoords.x + 
 		" of DungeonRooms, which has xdimensions " + DungeonRooms.length);
-		return;
+		return false;
 	}
 	if(quantizedWorldCoords.x < 0)
 	{
 		console.log("Error: attempted to index " + quantizedWorldCoords.x + 
 		" of DungeonRooms, which has xdimensions " + DungeonRooms.length);
-		return;
+		return false;
 	}
 	if(quantizedWorldCoords.y >= DungeonRooms[quantizedWorldCoords.x].length)
 	{
 		console.log("Error: attempted to index " + quantizedWorldCoords.y + 
 		" of DungeonRooms, which has ydimensions " + DungeonRooms[quantizedWorldCoords.x].length);
-		return;
+		return false;
 	}
 	if(quantizedWorldCoords.y < 0)
 	{
 		console.log("Error: attempted to index " + quantizedWorldCoords.y + 
 		" of DungeonRooms, which has ydimensions " + DungeonRooms[quantizedWorldCoords.x].length);
-		return;
+		return false;
 	}
 	//console.log("success");
 	
@@ -39,11 +39,14 @@ function UIBuildRoom(quantizedWorldCoords)
 	if(!CanBuild(chosenRoom))
 	{
 		//play sfx for build failure here
-		return null;
+
+		return false;
 	}
 	chosenRoom.CreateMapTiles();
+
 	update_dist()
-	return chosenRoom.sprite;
+	return true;
+
 }
 
 function CanBuild(tryRoom)
