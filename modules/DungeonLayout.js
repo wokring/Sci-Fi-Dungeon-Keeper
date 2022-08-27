@@ -1,22 +1,17 @@
-import {DungeonRoom} from "./DungeonRoom.js"
+import DungeonRoom from "./DungeonRoom.js"
 
-const DungeonRooms = new Array()
+const DungeonRooms = []; 
 const DUNGEON_HEIGHT = 10;
 const DUNGEON_WIDTH = 10;
 
-function BuildDungeon()
-{
-	for(var i=0; i<DUNGEON_HEIGHT; i++)
-	{
-		DungeonRooms.push(new Array());
-		for(var j=0; j<DUNGEON_WIDTH; j++)
-		{
+function BuildDungeon() {
+	for(let i = 0; i < DUNGEON_HEIGHT; ++i) {
+		DungeonRooms.push([]);
+
+		for(let j = 0; j < DUNGEON_WIDTH; ++j) {
 			DungeonRooms[i].push(new DungeonRoom());
 		}
 	}
-	//console.log(DungeonRooms);
-	
-	var myroom = DungeonRooms[6][3];
 }
 
-export { BuildDungeon };
+export default BuildDungeon;
