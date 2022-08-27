@@ -96,7 +96,7 @@ class RoomTree {
             let node = queue.shift();
 
             if (node === end) {
-                path = [end];
+                let path = [end];
 
                 while (path[-1] !== start) {
                     path.unshift(parent.get(path[-1]));
@@ -177,7 +177,17 @@ class RoomTree {
             distance += 1;
         }
     }
+
+    preOrder(node, array){
+        array.push(node);
+        node.neighbours().forEach(neighbor => this.preOrder(neighbor, array));
+    }
+
+    getRandomNode(){
+        let preOrderArray = [];
+        this.preOrder(this.root, preOrderArray);
+        return preOrderArray[Math.floor(Math.random() * preOrderArray.length)];
+    }
 }
 
-export default RoomTree;
-export { RoomNode, direction };
+export { RoomTree, RoomNode, direction };
