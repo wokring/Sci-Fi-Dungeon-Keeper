@@ -1,4 +1,4 @@
-import DungeonRoom from "./DungeonRoom.js"
+import {DungeonRoom} from "./DungeonRoom.js"
 
 const DungeonRooms = []; 
 const DUNGEON_HEIGHT = 10;
@@ -14,4 +14,4 @@ function BuildDungeon() {
 	}
 }
 
-export BuildDungeon;
+export {BuildDungeon};
