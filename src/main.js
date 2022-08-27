@@ -1,6 +1,6 @@
-import { RoomTree, RoomNode } from "../modules/RoomTree.js" 
-import { CreateWorld } from "../modules/create_world.js"
-import { MapTile } from "../modules/MapTile.js"
+import RoomTree, { RoomNode } from "../modules/RoomTree.js" 
+import CreateWorld from "../modules/create_world.js"
+import MapTile from "../modules/MapTile.js"
 import WebGL from "../js/WebGL.js";
 import {Spawner, SpawnManager} from "../modules/Spawner.js";
 
