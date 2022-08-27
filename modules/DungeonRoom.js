@@ -18,6 +18,11 @@ class DungeonRoom
 		this.myDungeonIndex = dungeonIndex;
 		this.myWorldCoords = new THREE.Vector2(dungeonIndex.x + WORLD_MIN_X, dungeonIndex.y + WORLD_MIN_Y);
 		this.isBuilt = false;
+        
+		this.unit = [];
+		this.trap = [];
+		this.spawn = [];
+		this.texture = [];
 	}
 	CreateMapTiles()
 	{

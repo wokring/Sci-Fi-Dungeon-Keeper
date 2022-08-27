@@ -4,6 +4,7 @@ import { UIBuildRoom } from "../modules/UIBuildRoom.js"
 import { MapTile } from "../modules/MapTile.js"
 import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
 import WebGL from "../js/WebGL.js";
+import {Spawner, SpawnManager} from "../modules/Spawner.js";
 
 const frustumSize = 10;
 let camera,aspect,scene,renderer,gui;
@@ -163,6 +164,15 @@ function main() {
 		const warning = WebGL.getWebGLErrorMessage();
 		document.getElementById("container").appendChild(warning);
 	}
+    const room1 = "room1";
+    const room2 = "room2";
+    const info1 = [1, 2, 3, 4, 5, 6, room1, [0,0],1];
+    const info2 = [1, 2, 3, 4, 5, 6, room2, [0,0],1];
+    const s1 = new Spawner(room1,info1, 5, 2);
+    const s2 = new Spawner(room2,info2, 2, 3);
+    const manager = new SpawnManager();
+    manager.addSpawn(s1);
+    manager.addSpawn(s2);
 }
 
 
