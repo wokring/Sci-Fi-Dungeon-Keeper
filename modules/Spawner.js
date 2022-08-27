@@ -9,7 +9,6 @@ class Spawner{
         this._spawnSpan = spawnSpan;
         this._timeUntilNextSpawn = spawnSpan;
         this._spawnLimit = spawnLimit;
-        this._intervalID = setInterval(this.status.bind(this), 1000);
     }
     get units() {
         return this._units;
@@ -20,7 +19,6 @@ class Spawner{
 
     status() {
         //Check all units status right now
-        console.log(this._units);
         let og_length = this._units.length;
         this._units = this._units.filter(unit => unit.health > 0);
         //If the spawnLimit has been reached, maintain the timer at maximum.
@@ -55,4 +53,21 @@ class Spawner{
     }
 }
 
-export {Spawner}
+
+class SpawnManager{
+    constructor() {
+        this._spawns = [];
+        //Check the status of all spawn every second
+        this._intervalID = setInterval(this.status.bind(this), 1000);
+    }
+
+    addSpawn(spawn) {
+        this._spawns.push(spawn);
+    }
+
+    status(){
+        //Check the status of each spawn in the manager
+        this._spawns.forEach(spawn => spawn.status());
+    }
+}
+export {Spawner, SpawnManager}
