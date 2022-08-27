@@ -1,8 +1,9 @@
 import {DungeonRoom} from "./DungeonRoom.js"
+import {MapTile} from "./MapTile.js"
 
-const DungeonRooms = new Array()
-const DUNGEON_HEIGHT = 10;
-const DUNGEON_WIDTH = 10;
+const DungeonRooms = []; 
+const DUNGEON_HEIGHT = 8;
+const DUNGEON_WIDTH = 8;
 
 function BuildDungeon()
 {
@@ -11,12 +12,11 @@ function BuildDungeon()
 		DungeonRooms.push(new Array());
 		for(var j=0; j<DUNGEON_WIDTH; j++)
 		{
-			DungeonRooms[i].push(new DungeonRoom());
+			const newRoom = new DungeonRoom();
+			newRoom.CreateMapTiles(new THREE.Vector2(i-4,j-3));
+			DungeonRooms[i].push(newRoom);
 		}
 	}
-	//console.log(DungeonRooms);
-	
-	var myroom = DungeonRooms[6][3];
 }
 
-export { BuildDungeon };
+export {BuildDungeon};
