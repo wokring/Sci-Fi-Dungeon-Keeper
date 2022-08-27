@@ -31,7 +31,7 @@ class RoomNode {
     }
 
     addRoom(grid, dir, data) {
-        if (dir == up) {
+        if (dir === up) {
             if (this.level - 1 < 0) {
                 console.error("Out of grid upwards.");
                 return null;
@@ -40,7 +40,7 @@ class RoomNode {
             this.up = new RoomNode(this, this.height, this.width, data, this.level-1, this.gen);
             grid[this.level-1][this.gen] = this.up;
             return this.up;
-        } else if (dir == down) {
+        } else if (dir === down) {
             if (this.level + 1 > grid.length - 1) {
                 console.error("Out of grid downwards.");
                 return null;
@@ -49,7 +49,7 @@ class RoomNode {
             this.down = new RoomNode(this, this.height, this.width, data, this.level+1, this.gen);
             grid[this.level+1][this.gen] = this.down;
             return this.down;
-        } else if (dir == left) {
+        } else if (dir === left) {
             if (this.gen - 1 < 0) {
                 console.error("Out of grid leftwards.");
                 return null;
@@ -58,7 +58,7 @@ class RoomNode {
             this.left = new RoomNode(this, this.height, this.width, data, this.level, this.gen-1);
             grid[this.level][this.gen-1] = this.left;
             return this.left;
-        } else if (dir == right) {
+        } else if (dir === right) {
             if (this.gen + 1 > grid[0].length - 1) {
                 console.error("Out of grid rightwards.");
                 return null;
@@ -99,7 +99,7 @@ class RoomTree {
             let n = q.pop();
 
             if (n === end) {
-                path = [end];
+                let path = [end];
 
                 while (path[-1] !== start) {
                     path.push(parent.get(path[-1]));
@@ -123,6 +123,17 @@ class RoomTree {
         }
 
         return false;
+    }
+
+    preOrder(node, array){
+        array.push(node);
+        node.neighbours().forEach(neighbor => this.preOrder(neighbor, array));
+    }
+
+    getRandomNode(){
+        let preOrderArray = [];
+        this.preOrder(this.root, preOrderArray);
+        return preOrderArray[Math.floor(Math.random() * preOrderArray.length)];
     }
 }
 

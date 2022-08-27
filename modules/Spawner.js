@@ -58,6 +58,7 @@ class SpawnManager{
     constructor() {
         this._spawns = [];
         //Check the status of all spawn every second
+        //Or we can call the function when needed
         this._intervalID = setInterval(this.status.bind(this), 1000);
     }
 

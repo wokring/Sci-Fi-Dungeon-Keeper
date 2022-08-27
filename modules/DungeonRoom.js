@@ -12,6 +12,13 @@ const FLOOR_D = 4;
 
 class DungeonRoom
 {
+	constructor() {
+		this.unit = [];
+		this.trap = [];
+		this.spawn = [];
+		this.texture = [];
+	}
+
 	CreateMapTiles(worldCoords)
 	{
 		new MapTile(SOUTH|WEST,new THREE.Vector2(
