@@ -1,5 +1,5 @@
 import { RoomTree, RoomNode } from "../modules/RoomTree.js" 
-import { CreateTestRoom } from "../modules/create_world.js"
+import { CreateWorld } from "../modules/create_world.js"
 import { MapTile } from "../modules/MapTile.js"
 import WebGL from "../js/WebGL.js";
 
@@ -25,7 +25,7 @@ function main() {
     camera.position.z = 5;
     
     MapTile.scene = scene;
-    CreateTestRoom();
+    CreateWorld();
 
 //     const grid = [
 //         [null, null],

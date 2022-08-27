@@ -1,5 +1,6 @@
 
 import { MapTile } from "../modules/MapTile.js"
+import { BuildDungeon } from "../modules/DungeonLayout.js"
 
 const NORTH = 1;
 const SOUTH = 2;
@@ -97,6 +98,12 @@ function CreateTestRoom()
 	new MapTile(WEST, new THREE.Vector2(-2, 1), FLOOR_D);
 }
 
+function CreateWorld()
+{
+	CreateTestRoom();
+	BuildDungeon();
+}
+
 //a green background tile to debug if a tile is rendering properly
 /*
 const bgPlaneGeom = new THREE.PlaneGeometry(5, 5);
@@ -106,4 +113,4 @@ scene.add(bgPlane);
 bgPlane.position.z = -0.001;
 */
 
-export { CreateTestRoom };
+export { CreateWorld };
