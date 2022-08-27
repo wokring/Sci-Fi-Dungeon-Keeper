@@ -5,10 +5,12 @@ import { MapTile } from "../modules/MapTile.js"
 import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
 import WebGL from "../js/WebGL.js";
 import {Spawner, SpawnManager} from "../modules/Spawner.js";
-
+import { MobManager } from "../modules/MobManager.js"
+import { Unit } from "../modules/Unit.js"
 const frustumSize = 10;
 let camera,aspect,scene,renderer,gui;
 
+const CLOCK = new THREE.Clock()
 const CAMERA_HIDDEN_Z = 100;
 const GHOST_BUILD_Z = 3;
 
@@ -57,7 +59,8 @@ const cube2 = new THREE.Mesh(geometry, material);
 
 function animate() {
     requestAnimationFrame(animate);
-
+	CLOCK.getDelta()
+	MobManager.getInstance().update()
     var obj = cube;
 
     var obj2 = cube2;
@@ -157,9 +160,10 @@ function main() {
     	CreateWorld();
     
 	if (WebGL.isWebGLAvailable()) {
-		cube2.position.x = -2
-		cube2.position.y = -2
-		animate();
+		var mm = MobManager.getInstance()
+		mm.createMob(new Unit(10,10,10,1,1,1,scene,[0,1],[-1,3]))
+		mm.createMob(new Unit(10,10,10,1,1,1,scene,[0,1],[3,5]))
+		animate()
 	} else {
 		const warning = WebGL.getWebGLErrorMessage();
 		document.getElementById("container").appendChild(warning);

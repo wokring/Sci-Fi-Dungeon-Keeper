@@ -3,8 +3,8 @@ const MOVEMENT_CONSTANT = 0.1;
 const CAMERA_FACTOR = 2;
 function Fight(this_unit) {
     var mob_manager = MobManager.getInstance()
-    unit_index = mob_manager.getUnit(this_unit)
-    enemy, x, y, vector = mob_manager.getClosest(this_unit)
+    var unit_index = mob_manager.getUnit(this_unit)
+    let enemy, x, y, vector = mob_manager.getClosest(this_unit)
     if (enemy = null) {
         mob_manager.mobs[unit_index].finishFight()
     } else {
@@ -20,6 +20,7 @@ function Fight(this_unit) {
     } else {
         mob_manager.mobs[unit_index].position[0] += (x/vector) * this_unit.speed * MOVEMENT_CONSTANT;
         mob_manager.mobs[unit_index].position[1] += (y/vector) * this_unit.speed * MOVEMENT_CONSTANT;
+        mob_manager.mobs[unit_index].setPosition()
     }    
     return true;
 }

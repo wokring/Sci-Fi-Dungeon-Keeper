@@ -24,6 +24,10 @@ var MobManager = (function(){
         getUnits() {
             return this.mobs
         }
+        arrayEquals(a, b) {
+            return JSON.stringify(a)==JSON.stringify(b);
+        }
+
         getClosest(in_unit) {
             const array = [...this.mobs]
             var distance = 999999999 // set to huge number so first distance will overwrite
@@ -32,7 +36,11 @@ var MobManager = (function(){
             var r_y = null
             var r_vector = null
             array.forEach(function(item, index) {
+                console.log(this.arrayEquals(item.room, in_unit.room))
+                console.log(item.room)
+                console.log(in_unit.room)
                 if ((in_unit.room == item.room) && (item != in_unit)) {
+                    console.log("yes!")
                     var x_diff = unit.pos[0] - in_unit.pos[1];
                     var y_diff = unit.pos[1] - in_unit.pos[1];
                     var nvector = ((x_diff) ** 2 + (y_diff) ** 2)**0.5;
@@ -47,6 +55,11 @@ var MobManager = (function(){
             });
             return [r_unit, r_x, r_y, r_vector]
     
+        }
+        update(d_time) {
+            for (var i = 0; i < this.mobs.length; i++) {
+                this.mobs[i].doCombat(d_time)
+            }
         }
 	}
   
