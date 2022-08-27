@@ -1,103 +1,120 @@
-class RoomNode {
-    left = null;
-    middle = null;
-    right = null;
+import BuildDungeon from "./DungeonRoom.js";
 
-    constructor(parent, height, width, data, depth, col) {
+const direction = {
+    up: 0,
+    down: 1,
+    left: 2,
+    right: 3
+};
+
+class RoomNode {
+    const children = {
+        up: null,
+        down: null,
+        left = null,
+        right = null
+    };
+
+    constructor(parent, height, width, data, level, gen) {
         this.parent = parent;
         this.height = height;
         this.width = width;
         this.data = data;
-        this.depth = depth
-        this.col = col;
+        this.level = level
+        this.gen = gen;
     }
 
     get neighbours() {
-        return [this.left, this.middle, this.right];
+        return this.children;
     }
 
-    addRoom(grid, direction, data) {
-        if (direction == 0) {
-            if (this.col - 1 < 0) {
-                console.error("Out of grid to the left.");
+    addRoom(grid, dir, data) {
+        if (dir == direction.up) {
+            if (this.level - 1 < 0) {
+                console.error("Out of grid upwards.");
                 return null;
             }
 
-            this.left = new RoomNode(this, this.height, this.width, data, this.depth + 1);
-            grid[this.depth][this.col-1] = this.left;
-            return this.left;
-        } else if (direction == 1) {
-            if (this.depth + 1 > grid.length - 1) {
-                console.error("Out of grid to the bottom.");
+            this.children.up = new RoomNode(this, this.height, this.width, data, this.level-1, this.gen);
+            grid[this.level-1][this.gen] = this.children.up;
+            return this.children.up;
+        } else if (dir == direction.down) {
+            if (this.level + 1 > grid.length - 1) {
+                console.error("Out of grid downwards.");
                 return null;
             }
 
-            this.middle = new RoomNode(this, this.height, this.width, data, this.depth + 1);
-            grid[this.depth+1][this.col] = this.middle;
-            return this.middle;
-        } else if (direction == 2) {
-            if (this.col + 1 > grid[0].length - 1) {
-                console.error("Out of grid to the right.");
+            this.children.down = new RoomNode(this, this.height, this.width, data, this.level+1, this.gen);
+            grid[this.level+1][this.gen] = this.children.down;
+            return this.children.down;
+        } else if (dir == direction.left) {
+            if (this.gen - 1 < 0) {
+                console.error("Out of grid leftwards.");
                 return null;
             }
 
-            this.right = new RoomNode(this, this.height, this.width, data, this.depth + 1);
-            grid[this.depth][this.col+1] = this.right;
-            return this.right;
+            this.children.left = new RoomNode(this, this.height, this.width, data, this.level, this.gen-1);
+            grid[this.level][this.gen-1] = this.children.left;
+            return this.children.left;
+        } else if (dir== direction.right) {
+            if (this.gen + 1 > grid[0].length - 1) {
+                console.error("Out of grid rightwards.");
+                return null;
+            }
+
+            this.children.right = new RoomNode(this, this.height, this.width, data, this.level, this.gen+1);
+            grid[this.level][this.gen+1] = this.children.right;
+            return this.children.right;
         } else {
+            console.error(`Not valid direction specified ${dir}`);
             return null;
         }
     }
 }
 
-// NOTE: Grid generation is not implemented.
 class RoomTree {
     #height = 0;
     #width = 0;
     root = null;
 
-    constructor(height, width, grid) {
+    constructor(height, width) {
         this.#height = height;
         this.#width = width;
-        this.grid = grid; // Starting node it always in 0th row but column is arbitrary.
+        this.grid = BuildDungeon();
     }
 
-    // TODO: Don't hardcode to only be in 0th row.
-    set makeRoot(col) {
-        this.root = new RoomNode(null, this.#height, this.#width, null, 0, col);
-        this.grid[0][col] = this.root;
+    makeRoot(row, col) {
+        this.root = new RoomNode(null, this.#height, this.#width, null, row, col);
+        this.grid[row][col] = this.root;
     }
 
-    getRoomNode(direction, depth) {
-        const q = [this.root];
+    getRoomNodePath(start, end) {
+        const q = [start];
+        const parent = new Map();
         const v = new Set([]);
-
-        if (depth == 0) {
-            return this.root;
-        } 
 
         while (typeof q != "undefined" && q != null && q.length != null && q.length > 0) {
             let n = q.pop();
 
-            if (n.level == depth) {
-                switch (direction) {
-                    case 0:
-                        if (n.parent.left != null) { return n.parent.left; }
-                    case 1:
-                        if (n.parent.middle != null) { return n.parent.middle; } 
-                    case 2:
-                        if (n.parent.right != null) { return n.parent.right; }
-                    default:
-                        return false;
+            if (n === end) {
+                path = [end];
+
+                while (path[-1] !== start) {
+                    path.push(parent.get(path[-1]));
                 }
+
+                path.reverse();
+                return path;
             }
 
             if (!v.has(n)) {
                 v.add(n);
 
-                for (let i = 0; i < 3; ++i) {
-                    if (n.neighbours[i] != null && !v.has(n.neighbours[i])) {
-                        q.push(n.neighbours[i]);
+                for (let i = 0; i < 4; ++i) {
+                    let c = n.neighbours[i];
+                    if (c != null && !v.has(c)) {
+                        parent.set(c, n);
+                        q.push(c);
                     }
                 }
             }
@@ -107,4 +124,5 @@ class RoomTree {
     }
 }
 
-export { RoomTree, RoomNode };
+export default RoomTree;
+export { RoomNode, direction };
