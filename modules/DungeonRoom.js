@@ -1,5 +1,5 @@
 import {MapTile} from "./MapTile.js"
-import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
+import {WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y,DungeonRooms} from "../modules/DungeonLayout.js"
 
 const NORTH = 1;
 const SOUTH = 2;
@@ -67,6 +67,55 @@ class DungeonRoom
 		new MapTile(SOUTH, 	new THREE.Vector2(
 			this.myWorldCoords.x + MapTile.worldTileDefaults.x * 1, 
 			this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
+	}
+	getCentre()
+	{
+		return new THREE.Vector2(this.myWorldCoords.x + 0.5, this.myWorldCoords.y + 0.5);
+	}
+	getSqrdDist(otherRoom)
+	{
+		var otherCentre = otherRoom.getCentre();
+		var myCentre = this.getCentre();
+		return otherCentre.x * otherCentre.x + otherCentre.y * otherCentre.y;
+	}
+	getAngle(otherRoom)
+	{
+		var otherCentre = otherRoom.getCentre();
+		var myCentre = this.getCentre();
+		return Math.atan2(otherCentre.x - myCentre.x, otherCentre.y - myCentre.y);
+	}
+	getAdjacentRooms()
+	{
+		var rooms = new Array();
+		
+		//NORTH
+		if(this.myDungeonIndex.y < DungeonRooms[this.myDungeonIndex.x].length - 1)
+		{
+			const adjRoom = DungeonRooms[this.myDungeonIndex.x][this.myDungeonIndex.y + 1];
+			rooms.push(adjRoom);
+		}
+		
+		//SOUTH
+		if(this.myDungeonIndex.y > 0)
+		{
+			const adjRoom = DungeonRooms[this.myDungeonIndex.x][this.myDungeonIndex.y - 1];
+			rooms.push(adjRoom);
+		}
+		
+		//EAST
+		if(this.myDungeonIndex.x < DungeonRooms.length - 1)
+		{
+			const adjRoom = DungeonRooms[this.myDungeonIndex.x + 1][this.myDungeonIndex.y];
+			rooms.push(adjRoom);
+		}
+
+		//WEST
+		if(this.myDungeonIndex.x > 0)
+		{
+			const adjRoom = DungeonRooms[this.myDungeonIndex.x - 1][this.myDungeonIndex.y];
+			rooms.push(adjRoom);
+		}
+		return rooms;
 	}
 }
 

@@ -229,6 +229,10 @@ function init(){
     ghostPlane = new THREE.Mesh(new THREE.PlaneGeometry( 1, 1 ), new THREE.MeshBasicMaterial({ color: 0x00ff00, opacity: 0.1 }));
     ghostPlane.position.z = CAMERA_HIDDEN_Z;
 
+    CreateWorld();
+    
+	mobManager.init(scene);
+    
     scene.add(ghostPlane);
     init_gui()
     
@@ -242,11 +246,11 @@ function init(){
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
+    mobManager.Update(CLOCK.getDelta());
 }
 
 function main() {
 	init()
-    CreateWorld();
     
 	if (WebGL.isWebGLAvailable()) {
 		animate();
