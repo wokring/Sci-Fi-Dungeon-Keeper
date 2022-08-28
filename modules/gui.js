@@ -11,7 +11,8 @@ import { MapTile } from "../modules/MapTile.js"
 import { UIBuildRoom } from "../modules/UIBuildRoom.js"
 
 const ROOM_COSTP = [1000,5,3,4,1,2,3,4,5,100]
-const ROOM_COSTC = [1000,10,3,4,3,2,3,4,5,50]
+//const ROOM_COSTC = [1000,10,3,4,3,2,3,4,5,50]
+const ROOM_COSTC = [1000,0,0,0,0,0,0,0,0,0]
 let camera,aspect,gui,ghostPlane;
 let CP_ctx,PT_ctx,CP_t,PT_t;
 const plane05_1 = new THREE.PlaneGeometry( 1, 0.5 );
@@ -106,6 +107,9 @@ function init_gui(){
     power_thing.position.z = 3;
     power_thing.position.y = 3;
     
+    update_text(power.toString(),PT_ctx,PT_t);
+    update_text(circuit.toString(),CP_ctx,CP_t);
+	
     scene.add(power_thing);
     scene.add(PT_tp);
     scene.add(circuit_board);
@@ -135,24 +139,27 @@ function onDocumentMouseDown( event ) {
 	{
 
         if (power >= ROOM_COSTP[buildType] && circuit >= ROOM_COSTC[buildType] && buildType > 0){
+
             var x = mx-WORLD_MIN_X;
             var y = my-WORLD_MIN_Y;
-
+            var buildSuccess = false;
             switch(buildType){
                 case 1:
-                        UIBuildRoom(new THREE.Vector2(x,y)); 
-                        power -= ROOM_COSTP[buildType];
-                        circuit -= ROOM_COSTC[buildType];
+                        buildSuccess = UIBuildRoom(buildType, new THREE.Vector2(x,y)); 
                     break;
                 case 4:
                     if (DungeonRooms[x][y].isBuilt && DungeonRooms[x][y].trap == null){
                         DungeonRooms[x][y].trap = new Trap(10,5,x -3 ,y -3);
-                        power -= ROOM_COSTP[buildType];
-                        circuit -= ROOM_COSTC[buildType];
                         scene.add(DungeonRooms[x][y].trap.sprite)
+                        buildSuccess = true;
                     }
                     break;
 
+            }
+            if(buildSuccess)
+            {
+                power -= ROOM_COSTP[buildType];
+                circuit -= ROOM_COSTC[buildType];
             }
         }
         //exit room construction mode
@@ -214,8 +221,11 @@ function onDocumentKeyDown(event) {
     ghostPlane.position.x = mx;
     ghostPlane.position.y = my;
     
+    //press 'a' to go into room construction mode, and create a construction ghost
+    //this is a visual effect which follows the cursor
     switch(event.key) {
         case "a":
+            //room
             ghostPlane.position.z = GHOST_BUILD_Z;
             Build = true;
             buildType = 1;
@@ -225,16 +235,16 @@ function onDocumentKeyDown(event) {
             Build = true;
             buildType = 4;
             break;
+        /*
         case "e":
             ghostPlane.position.z = GHOST_BUILD_Z;
             Build = true;
             buildType = 3;
             break;
+            */
         default:
             break;
     }
-	//press 'a' to go into room construction mode, and create a construction ghost
-	//this is a visual effect which follows the cursor
 }
 
 export {init_gui,camera,aspect,frustumSize};

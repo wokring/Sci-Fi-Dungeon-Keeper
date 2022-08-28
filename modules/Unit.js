@@ -5,8 +5,10 @@ const MOBSTATE_UNKNOWN = 0
 const MOBSTATE_PATHING = 1;
 
 class Unit {
+	static nextId = 1;
 	constructor(scene, startDungeonRoom)
 	{
+		this.id = Unit.nextId++;
 		this.makeSprite()
 		scene.add(this.plane)
 		this.mobState = MOBSTATE_UNKNOWN;
@@ -15,7 +17,7 @@ class Unit {
 		//console.log(startDungeonRoom);
 		this.setPosition(startDungeonRoom.getCentre());
 		this.nextPathTarget = null;
-		this.maxSpeed = 0.3;
+		this.maxSpeed = 1;
 		//this.plane = null;
 	}
 	PathToTreasure()
@@ -24,7 +26,6 @@ class Unit {
 		this.mobState = MOBSTATE_PATHING;
 		this.currentPath = PathHelper.GetPathToTreasure(this.dungeonRoom);
 		this.nextPathTarget = this.currentPath[0];
-		
 	}
 	PathToEntrance()
 	{
@@ -44,23 +45,35 @@ class Unit {
 				moveVector.normalize();
 				moveVector.multiplyScalar(deltaTime, this.maxSpeed);*/
 				this.plane.position.y -= this.maxSpeed * deltaTime;
-				//console.log(this.dungeonRoom.getCentre().distanceToSquared(this.nextPathTarget.getCentre())	);
-				if(this.dungeonRoom.getCentre().distanceToSquared(this.nextPathTarget.getCentre()) <= 0.1)
+				var sqrDist = this.getSqrdDist(this.nextPathTarget.getCentre());	
+				//console.log("sqrDist:" + sqrDist);
+				
+				if(sqrDist <= 0.01)
 				{
-					//console.log("reached dest " + this.nextPathTarget.plane.position.y);
+					this.dungeonRoom.onMobExit(this);
+					this.dungeonRoom = this.nextPathTarget;
+					this.dungeonRoom.onMobEnter(this);
+					
 					if(this.currentPath.length > 0)
 					{
-						this.dungeonRoom = this.nextPathTarget;
 						this.nextPathTarget = this.currentPath.shift();
+						sqrDist = this.getSqrdDist(this.nextPathTarget.getCentre());
+						//console.log("nextPathTarget:" + this.nextPathTarget.id + " sqrDist:" + sqrDist);
 					}
 					else
 					{
+						//console.log("finished pathing");
 						this.mobState = MOBSTATE_UNKNOWN;
 					}
 				}
 				break;
 			}
 		}
+	}
+	getSqrdDist(otherPos)
+	{
+		return (this.plane.position.x - otherPos.x) * (this.plane.position.x - otherPos.x) + 
+			(this.plane.position.y - otherPos.y) * (this.plane.position.y - otherPos.y);
 	}
 	getPosition()
 	{
