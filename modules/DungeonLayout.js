@@ -60,14 +60,12 @@ function init_distoT(){
 	dist[treasurex][treasurey] = 0;
 	dist[4][3] = 1;
 	dist[3][3] = 2;
-	console.log(dist)
 	return dist;
 }
 
 
 function update_dist (){
 	update_dist_room(treasurex,treasurey);
-	console.log(dist)
 
 }
 
