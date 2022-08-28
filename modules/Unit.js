@@ -1,8 +1,16 @@
 import {mobManager} from './MobManager.js'
 import {PathHelper} from './PathHelper.js'
+import {DungeonRooms} from "./DungeonLayout.js"
+import {WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y} from "../modules/DungeonLayout.js"
 
-const MOBSTATE_UNKNOWN = 0
-const MOBSTATE_PATHING = 1;
+const UNIT_SPRITE_WIDTH = 0.2;
+const UNIT_SPRITE_HEIGHT = 0.2;
+const UNIT_Z = 3;
+
+const MOBSTATE_NONE = 0
+const MOBSTATE_TREASUREHUNTING = 1;
+const MOBSTATE_ESCAPE = 2;
+
 var hit_audio = new Audio('../sfx/AllyHit.wav');
 var kill_audio = new Audio('../sfx/EnemyDie.wav')
 class Unit {
@@ -11,66 +19,147 @@ class Unit {
 	{
 
 		this.id = Unit.nextId++;
+		this.health = 5;
 		this.makeSprite()
+		this.scene = scene;
 		scene.add(this.plane)
-		this.mobState = MOBSTATE_UNKNOWN;
-		this.currentPath = new Array();
+		this.mobState = MOBSTATE_NONE;
+		//this.currentPath = new Array();
 		this.dungeonRoom = startDungeonRoom;
 		//console.log(startDungeonRoom);
-		this.setPosition(startDungeonRoom.getCentre());
-		this.nextPathTarget = null;
+		this.setPosition(startDungeonRoom.myWorldCoords);
+		startDungeonRoom.onMobEnter(this);
+		this.currentMoveTarget = null;
 		this.maxSpeed = 1;
-		//this.plane = null;
 	}
 	PathToTreasure()
 	{
-		//console.log("PathToTreasure()");
-		this.mobState = MOBSTATE_PATHING;
-		this.currentPath = PathHelper.GetPathToTreasure(this.dungeonRoom);
-		this.nextPathTarget = this.currentPath[0];
+		this.mobState = MOBSTATE_TREASUREHUNTING;
+		//this.currentPath = PathHelper.GetPathToTreasure(this.dungeonRoom);
+		//this.nextPathTarget = this.currentPath[0];
+			
 	}
 	PathToEntrance()
 	{
-		this.mobState = MOBSTATE_PATHING;
-		this.currentPath = PathHelper.GetPathToEntrance(this.dungeonRoom);
+		this.mobState = MOBSTATE_ESCAPE;
+		//this.currentPath = PathHelper.GetPathToEntrance(this.dungeonRoom);
+		//this.nextPathTarget = this.currentPath[0];
 	}
 	Update(deltaTime)
 	{
+		//console.log("mob #" + this.id + " mobState:" + this.mobState);
+		if(this.health <= 0)
+		{
+			return;
+		}
 		switch(this.mobState)
 		{
-			case MOBSTATE_PATHING:
+			case MOBSTATE_TREASUREHUNTING:
 			{
-				//get the angle between two points
-				//var currentAngle = this.dungeonRoom.getAngle(this.nextPathTarget);
-				/*var moveVector = this.nextPathTarget.getCentre().sub(this.dungeonRoom.getCentre());
-				console.log(this.dungeonRoom.getCentre().distanceToSquared(this.nextPathTarget.getCentre()));
-				moveVector.normalize();
-				moveVector.multiplyScalar(deltaTime, this.maxSpeed);*/
-				this.plane.position.y -= this.maxSpeed * deltaTime;
-				var sqrDist = this.getSqrdDist(this.nextPathTarget.getCentre());	
-				//console.log("sqrDist:" + sqrDist);
+				//do we need to get a new movement vector?
+				if(this.currentMoveTarget == null)
+				{
+					//get the updated move target
+					this.currentMoveTarget = this.dungeonRoom.getTreasureMoveTarget();
+					
+					//if we still cant get a move target, then stop pathing
+					if(this.currentMoveTarget == null)
+					{
+						//console.log("couldn't find path");
+						this.mobState = MOBSTATE_NONE;
+						return;
+					}
+				}
 				
-				if(sqrDist <= 0.01)
+				//construct the movement vector
+				var moveVector = new THREE.Vector2(this.currentMoveTarget.x - this.plane.position.x,
+					this.currentMoveTarget.y - this.plane.position.y);
+				moveVector.normalize();
+				
+				//move the mob
+				this.plane.position.x += moveVector.x * deltaTime * this.maxSpeed;
+				this.plane.position.y += moveVector.y * deltaTime * this.maxSpeed;
+				
+				//handle on mob entry and exit triggers
+				var curRoom = this.getQuantizedRoom();
+				if(curRoom != this.dungeonRoom)
 				{
 					this.dungeonRoom.onMobExit(this);
-					this.dungeonRoom = this.nextPathTarget;
+					this.dungeonRoom = curRoom;
 					this.dungeonRoom.onMobEnter(this);
-					
-					if(this.currentPath.length > 0)
+				}
+				
+				//how far to our next path node?
+				var sqrDist = this.getSqrdDist(this.currentMoveTarget);
+				//console.log("sqrDist to current target:" + sqrDist);
+				
+				//handle pathing
+				if(sqrDist <= 0.01)
+				{
+					//this.invalidateCurrentMoveTarget();
+					if(this.dungeonRoom != null)
 					{
-						this.nextPathTarget = this.currentPath.shift();
-						sqrDist = this.getSqrdDist(this.nextPathTarget.getCentre());
-						//console.log("nextPathTarget:" + this.nextPathTarget.id + " sqrDist:" + sqrDist);
+						this.currentMoveTarget = this.dungeonRoom.getTreasureMoveTarget();
+					}
+					
+					//have we got more path nodes to get to?
+					if(this.currentMoveTarget != null)
+					{
+						sqrDist = this.getSqrdDist(this.currentMoveTarget);
+						/*console.log("arrived, next:" + this.currentMoveTarget.x + ","
+							+ this.currentMoveTarget.y
+							+ " sqrDist:" + sqrDist
+							+ " remaining:" + this.dungeonRoom.dist_to_treasure);*/
 					}
 					else
 					{
 						//console.log("finished pathing");
-						this.mobState = MOBSTATE_UNKNOWN;
+						this.mobState = MOBSTATE_NONE;
 					}
 				}
-				break;
 			}
 		}
+	}
+	/*getCurrentMoveTarget()
+	{
+		if(this.currentPath.length > 0)
+		{
+			return this.currentPath[0].myWorldCoords;
+		}
+	}*/
+	/*invalidateCurrentMoveTarget()
+	{
+		if(this.currentPath.length > 0)
+		{
+			this.currentPath.shift();
+		}
+	}*/
+	getQuantizedRoom()
+	{
+		var x = this.plane.position.x + UNIT_SPRITE_WIDTH/2;
+		if(x > WORLD_MAX_X)
+		{
+			x = WORLD_MAX_X;
+		}
+		else if(x < WORLD_MIN_X)
+		{
+			x = WORLD_MIN_X;
+		}
+		
+		var y = this.plane.position.y + UNIT_SPRITE_HEIGHT/2;
+		if(y > WORLD_MAX_Y)
+		{
+			y = WORLD_MAX_Y;
+		}
+		else if(y < WORLD_MIN_Y)
+		{
+			y = WORLD_MIN_Y;
+		}
+		
+		x = Math.floor(x - WORLD_MIN_X);
+		y = Math.floor(y - WORLD_MIN_Y);
+		//console.log(x + "," + y);
+		return DungeonRooms[x][y];
 	}
 	getSqrdDist(otherPos)
 	{
@@ -87,9 +176,34 @@ class Unit {
 		this.plane.position.y = value.y;
 	}
 	makeSprite() {
-		const geometry = new THREE.PlaneGeometry( 0.2, 0.2 );
+		const geometry = new THREE.PlaneGeometry(UNIT_SPRITE_WIDTH, UNIT_SPRITE_HEIGHT);
 		const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
 		this.plane = new THREE.Mesh( geometry, material );
+		this.plane.position.z = UNIT_Z;
+	}
+	takeDamage(damage)
+	{
+		this.health -= damage;
+		if(this.health > 0)
+		{
+			hit_audio.play();
+		}
+		else
+		{
+			kill_audio.play();
+			this.destroy();
+		}
+	}
+	changeSprite() {
+		this.plane.material.color.setHex( 0xff0000 );
+		setTimeout(function () {
+			this.plane.material.color.setHex( 0xffff00 )
+		}.bind(this),500);
+	}
+
+	destroy() {
+		this.mobState = MOBSTATE_NONE;
+		this.scene.remove(this.plane);
 	}
     /*
     constructor(cost, health, damage, interval, speed, range, scene, room = [0,1], pos = [0,0], level = 1) {
@@ -147,16 +261,14 @@ class Unit {
         this._damage = value / (2^(this.level - 1));
     }
     */
-    getHit(damage, debuff = [1, 1]) {
-        if (this.damage - damage <= 0) {
-            kill_audio.play();
-            mobManager.killUnit(this);
-        } else {
-            hit_audio.play();
-            this.damage -= damage;
-        }
-        this.debuff = debuff;
-    }
+    // getHit(damage, debuff = [1, 1]) {
+    //     if (this.health - damage <= 0) {
+    //         mobManager.killUnit(this)
+    //     } else {
+    //         this.health -= damage;
+    //     }
+    //     this.debuff = debuff;
+    // }
     resetDebuff() {
         this.debuff = [1, 1]
     }

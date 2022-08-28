@@ -21,7 +21,7 @@ var mx = 0;
 var my = 0;
 
 const CAMERA_HIDDEN_Z = 100;
-const GHOST_BUILD_Z = 3;
+const GHOST_BUILD_Z = 4;
 const frustumSize = 10;
 
 var power = 1000;
@@ -63,11 +63,16 @@ function init_gui(){
     ghostPlane.position.z = CAMERA_HIDDEN_Z;
     scene.add(ghostPlane);
 
-    const bar = new THREE.Mesh(new THREE.PlaneGeometry( 10, 1 ), new THREE.MeshBasicMaterial({ color: 0xFF0000 }));
+
+    const bar_tex = new THREE.TextureLoader().load( '../sprites/bar.png' );
+    bar_tex.magFilter = THREE.NearestFilter
+    const bar_mt = new THREE.MeshBasicMaterial({ map: bar_tex });
+    bar_mt.transparent = true;
+    const bar = new THREE.Mesh(new THREE.PlaneGeometry( 10, 1.5 ), bar_mt);
     bar.position.y += -4;
     bar.position.z += 3;
 
-    CP_ctx = create_context("blue","5")
+    CP_ctx = create_context("blue",circuit.toString())
     CP_t = new THREE.CanvasTexture(CP_ctx.canvas)
     var CP_tp =  new THREE.Mesh(plane05_1, new THREE.MeshBasicMaterial({ map: CP_t, }));
     CP_tp.material.transparent = true;
@@ -75,7 +80,7 @@ function init_gui(){
     CP_tp.position.z += 3;
     CP_tp.position.y += 2.6;
 
-    PT_ctx = create_context("blue","10")
+    PT_ctx = create_context("blue",power.toString())
     PT_t = new THREE.CanvasTexture(PT_ctx.canvas)
     var PT_tp =  new THREE.Mesh(plane05_1, new THREE.MeshBasicMaterial({ map: PT_t, }));
     PT_tp.material.transparent = true;
@@ -138,19 +143,38 @@ function onDocumentMouseDown( event ) {
             var x = mx-WORLD_MIN_X;
             var y = my-WORLD_MIN_Y;
             var buildSuccess = false;
-            switch(buildType){
-                case 1:
-                        buildSuccess = UIBuildRoom(buildType, new THREE.Vector2(x,y)); 
-                    break;
-                case 4:
-                    if (DungeonRooms[x][y].isBuilt && DungeonRooms[x][y].trap == null){
-                        DungeonRooms[x][y].trap = new Trap(10,5,x -3 ,y -3);
-                        scene.add(DungeonRooms[x][y].trap.sprite)
-                        buildSuccess = true;
-                    }
-                    break;
+		switch(buildType)
+		{
+			case 1:
+				buildSuccess = UIBuildRoom(buildType, new THREE.Vector2(x,y)); 
+				break;
+			case 3:
+				var room = DungeonRooms[x][y];
+				if (room.isBuilt && room.trap == null){
+				room.trap = new Spawner(room, [(scene, room)], 40, 4,x -3 ,y -3);
+				scene.add(room.trap.sprite)
+				buildSuccess = true;
+				}
+				break;
+			case 4:
+				var room = DungeonRooms[x][y];
+				if(!room.isBuilt)
+				{
+					console.log("Notice: Cannot build trap there, the room there is not built.");
+					break;
+				}
+				if (room.trap != null)
+				{
+					console.log("Notice: Cannot build trap there, already another trap present");
+					break;
+				}
+				
+				room.trap = new Trap(1,2,x -3 ,y -3, room);
+				scene.add(room.trap.sprite)
+				buildSuccess = true;
+				break;
 
-            }
+		}
             if(buildSuccess)
             {
                 power -= ROOM_COSTP[buildType];
@@ -230,13 +254,11 @@ function onDocumentKeyDown(event) {
             Build = true;
             buildType = 4;
             break;
-        /*
         case "e":
             ghostPlane.position.z = GHOST_BUILD_Z;
             Build = true;
             buildType = 3;
             break;
-            */
         default:
             break;
     }

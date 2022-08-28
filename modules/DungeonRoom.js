@@ -26,6 +26,7 @@ class DungeonRoom
 		this.trap = null;
 		this.spawn = [];
 		this.texture = [];
+		this.dist_to_treasure = 99999;
 	}
 	CreateMapTiles()
 	{
@@ -82,6 +83,46 @@ class DungeonRoom
 		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 1, 
 		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
 	}
+	getTreasureMoveTarget()
+	{
+		//are we the treasure room?
+		if(this.dist_to_treasure == 0)
+		{
+			return
+		}
+		
+		//grab the adjacent rooms
+		var adjRooms = this.getAdjacentRooms();
+		if(adjRooms.length == 0)
+		{
+			//todo: error checking
+			return;
+		}
+		
+		//find which one has the lowest dist
+		var closeRoom = null;
+		for(var i=0; i<adjRooms.length; i++)
+		{
+			var checkRoom = adjRooms[i]
+			if(closeRoom == null)
+			{
+				//we dont have a target yet
+				closeRoom = checkRoom;
+			}
+			else if(checkRoom.dist_to_treasure < closeRoom.dist_to_treasure)
+			{
+				//this next room is closer than the previous one we checked
+				closeRoom = checkRoom;
+			}
+		}
+		return closeRoom.myWorldCoords;
+	}
+	getEntranceMoveTarget()
+	{
+	}
+	getWanderMoveTarget()
+	{
+	}
 	getCentre()
 	{
 		return new THREE.Vector2(this.myWorldCoords.x + 0.5, this.myWorldCoords.y + 0.5);
@@ -135,6 +176,18 @@ class DungeonRoom
 	onMobEnter(mob)
 	{
 		this.units_present.push(mob);
+		if (this.trap !== null) {
+			this.trap.doHit(mob);
+			if (mob.health <= 0) {
+				//mob is killed
+				this.units_present = this.units_present.filter(unit => unit !== mob);
+				mob.dungeonRoom = null;
+				mob.destroy();
+			} else {
+				mob.dungeonRoom = this;
+			}
+
+		}
 		//console.log("maptile #" + this.id + " entered by mob #" + mob.id);
 	}
 	onMobExit(mob)
@@ -142,6 +195,7 @@ class DungeonRoom
 		if(this.units_present.indexOf(mob) >= 0)
 		{
 			this.units_present.splice(this.units_present.indexOf(mob),1);
+			mob.dungeonRoom = null;
 			//console.log("maptile #" + this.id + " exited by mob #" + mob.id);
 		}
 	}
