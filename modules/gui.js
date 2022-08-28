@@ -46,8 +46,8 @@ function create_context(color,text){
     context.font = "bold 140px Arial";
     context.fillText(text,0,200);
     return context
-
 }
+
 function update_text(new_text, old_text, texture){
     old_text.clearRect(0, 0, 400, 200);
     old_text.fillText(new_text,10,200);
@@ -116,8 +116,8 @@ function init_gui(){
 	
     scene.add(power_thing);
     scene.add(PT_tp);
-    scene.add(circuit_board);
-    scene.add(CP_tp);
+    //scene.add(circuit_board);
+    //scene.add(CP_tp);
     scene.add(bar);
    
     gui = [null,null,null,null,null,null];
