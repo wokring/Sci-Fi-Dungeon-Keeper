@@ -1,7 +1,7 @@
 import {camera} from "../modules/gui.js";
 
 
-function playSound(filepath) {
+function playSound(filepath, loop=false) {
     let listener;
     if (camera.children.length === 0) {
         listener = new THREE.AudioListener();
@@ -16,6 +16,7 @@ function playSound(filepath) {
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load( filepath, function( buffer ) {
         sound.setBuffer( buffer );
+        sound.setLoop(loop);
         sound.setVolume( 1 );
         sound.play();
     });
