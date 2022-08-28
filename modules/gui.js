@@ -66,7 +66,7 @@ function init_gui(){
     ghostPlane.position.z = CAMERA_HIDDEN_Z;
     scene.add(ghostPlane);
 
-    playSound("../sfx/CombatMusic.mp3");
+    playSound("../sfx/CombatMusic.mp3", true);
 
     const bar_tex = new THREE.TextureLoader().load( '../sprites/bar.png' );
     bar_tex.magFilter = THREE.NearestFilter
