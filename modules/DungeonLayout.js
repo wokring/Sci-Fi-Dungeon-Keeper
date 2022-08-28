@@ -127,6 +127,9 @@ function BuildDungeon()
 	scene.add(power_source);
 	DungeonRooms[4][3].CreateMapTiles();
 	DungeonRooms[3][3].CreateMapTiles();
+	DungeonRooms[2][3].CreateMapTiles();
+	DungeonRooms[1][3].CreateMapTiles();
+	DungeonRooms[0][3].CreateMapTiles();
 	
 	// for(var j=0; j<DUNGEON_HEIGHT; j++)
 	// {
@@ -145,7 +148,7 @@ function BuildDungeon()
 	// }
 	PathHelper.treasureRoom = DungeonRooms[treasurex][treasurey];
 	PathHelper.treasureRoom.dist_to_treasure = 0;
-	PathHelper.entranceRoom = DungeonRooms[3][3];
+	PathHelper.entranceRoom = DungeonRooms[0][3];
 	
 	//setup the path weightings
 	update_dist();

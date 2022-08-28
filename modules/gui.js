@@ -9,6 +9,7 @@ import { RoomTree, RoomNode } from "../modules/RoomTree.js"
 import {DungeonRooms} from "../modules/DungeonLayout.js"
 import { MapTile } from "../modules/MapTile.js"
 import { UIBuildRoom } from "../modules/UIBuildRoom.js"
+import {playSound} from "../modules/SoundPlayer.js";
 
 const ROOM_COSTP = [1000,5,3,4,1,2,3,4,5,100]
 //const ROOM_COSTC = [1000,10,3,4,3,2,3,4,5,50]
@@ -154,10 +155,11 @@ function onDocumentMouseDown( event ) {
             var x = mx-WORLD_MIN_X;
             var y = my-WORLD_MIN_Y;
             var buildSuccess = false;
+            playSound("../voices/HitOnMe.wav");
 		switch(buildType)
 		{
 			case 1:
-				buildSuccess = UIBuildRoom(buildType, new THREE.Vector2(x,y)); 
+				buildSuccess = UIBuildRoom(buildType, new THREE.Vector2(x,y));
 				break;
 			case 3:
 				var room = DungeonRooms[x][y];
