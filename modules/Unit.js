@@ -45,6 +45,10 @@ class Unit {
 	Update(deltaTime)
 	{
 		//console.log("mob #" + this.id + " mobState:" + this.mobState);
+		if(this.health <= 0)
+		{
+			return;
+		}
 		switch(this.mobState)
 		{
 			case MOBSTATE_TREASUREHUNTING:
