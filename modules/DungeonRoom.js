@@ -1,6 +1,7 @@
 import {MapTile} from "./MapTile.js"
 import {WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y,DungeonRooms} from "../modules/DungeonLayout.js"
 import { scene } from "../src/main.js";
+import { change_Power } from "./gui.js";
 
 const NORTH = 1;
 const SOUTH = 2;
@@ -35,7 +36,7 @@ class DungeonRoom
 		this.isBuilt = true;
 
 		let room_tex = new THREE.TextureLoader().load( '../sprites/room.png' );
-		if (this.myDungeonIndex.x === 3 && this.myDungeonIndex.y === 3) {
+		if (this.myDungeonIndex.x == 0 && this.myDungeonIndex.y == 3) {
 			room_tex = new THREE.TextureLoader().load( '../sprites/spawn_room.png' );
 		} else if (this.myDungeonIndex.x === 4 && this.myDungeonIndex.y === 4) {
 			room_tex = new THREE.TextureLoader().load( '../sprites/trophy_room.png' );
@@ -150,6 +151,9 @@ class DungeonRoom
 				mob.dungeonRoom = this;
 			}
 
+		} 
+		else if (mob.dungeonRoom.myDungeonIndex.x == 4 && mob.dungeonRoom.myDungeonIndex.y == 4) {
+			change_Power(-10);
 		}
 	}
 	onMobExit(mob)
