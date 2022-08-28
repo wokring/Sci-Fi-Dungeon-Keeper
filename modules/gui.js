@@ -11,6 +11,7 @@ import { MapTile } from "../modules/MapTile.js"
 import { UIBuildRoom } from "../modules/UIBuildRoom.js"
 import { Ally } from "./Ally.js";
 import {playSound} from "../modules/SoundPlayer.js";
+import {GameOver} from "../src/main.js";
 
 const ROOM_COSTP = [1000,5,3,4,1,2,3,4,5,100]
 //const ROOM_COSTC = [1000,10,3,4,3,2,3,4,5,50]
@@ -330,6 +331,11 @@ function modifyPower(powermod)
 {
 	power += powermod
 	update_text(power.toString(),PT_ctx,PT_t);
+	
+	if(power < 0)
+	{
+		GameOver();
+	}
 }
 function modifyCircuits(circuitmod)
 {
@@ -338,4 +344,12 @@ function modifyCircuits(circuitmod)
 }
 //update_text(circuit.toString(),CP_ctx,CP_t);
 
-export {init_gui,camera,aspect,frustumSize,modifyPower,modifyCircuits};
+function disableGUI()
+{
+    document.removeEventListener('mousemove', onDocumentMouseMove);
+    document.removeEventListener('keydown',onDocumentKeyDown);
+    document.removeEventListener('mousedown', onDocumentMouseDown);
+    document.removeEventListener('mouseup', onDocumentMouseUp);
+}
+
+export {init_gui,camera,aspect,frustumSize,modifyPower,modifyCircuits, disableGUI};

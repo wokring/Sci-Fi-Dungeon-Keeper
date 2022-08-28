@@ -225,7 +225,7 @@ class Unit {
 		else
 		{
 			kill_audio.play();
-			// this.destroy();
+			this.destroy();
 		}
 
 	}
