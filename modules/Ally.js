@@ -3,7 +3,7 @@ const HEALTH = [15,10,50];
 const TEX = ["../sprites/romba.png","../sprites/drone.png","../sprites/blow.png"];
 
 class Ally{
-    constructor(scene,type,x,y,i) {
+    constructor(scene,type,x,y) {
         this.attack = ATTACK[type];
         this.health = HEALTH[type];
         this.scene = scene;

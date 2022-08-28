@@ -166,7 +166,7 @@ class DungeonRoom
 	add_ally(s,t,x,y) {
 		for(var i =0; i < 4; i++) {
 			if (this.ally[i] == null){
-				this.ally[i] = new Ally(s,t,x,y,i);
+				this.ally[i] = new Ally(s,t,x,y);
 				return true;
 			}
 		}

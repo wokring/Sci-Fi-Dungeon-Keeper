@@ -55,7 +55,6 @@ function update_text(new_text, old_text, texture){
 }
 
 function init_gui(){
-    DungeonRooms[4][3].add_ally(scene,2,4,3);
 
     aspect = window.innerWidth / window.innerHeight;
         
@@ -174,14 +173,14 @@ function onDocumentMouseDown( event ) {
 					console.log("Notice: Cannot build trap there, already another trap present");
 					break;
 				}
-				room.trap = new Trap(1,2,x -3 ,y -3, room);
+				room.trap = new Trap(3,3,x -3 ,y -3, room);
 				scene.add(room.trap.sprite)
 				buildSuccess = true;
 				playSound("../sfx/BuildTrap.wav");
 				break;
             case 5:
-                var room = DungeonRooms[x][y];
-		if (room.isBuilt || room.trap == null)
+                room = DungeonRooms[x][y];
+		        if (!room.isBuilt)
                 {
                     console.log("Notice: Cannot build trap there.");
                     break;
@@ -194,8 +193,8 @@ function onDocumentMouseDown( event ) {
                 buildSuccess = true;
                 break;
             case 6:
-                var room = DungeonRooms[x][y];
-		if (room.isBuilt || room.trap == null)
+                room = DungeonRooms[x][y];
+		        if (!room.isBuilt)
                 {
                     console.log("Notice: Cannot build trap there.");
                     break;
@@ -208,8 +207,8 @@ function onDocumentMouseDown( event ) {
                 buildSuccess = true;
                 break;
             case 9:
-                var room = DungeonRooms[x][y];
-		if (room.isBuilt || room.trap == null)
+                room = DungeonRooms[x][y];
+		        if (!room.isBuilt)
                 {
                     console.log("Notice: Cannot build trap there.");
                     break;
