@@ -64,17 +64,7 @@ function init_gui(){
     ghostPlane.position.z = CAMERA_HIDDEN_Z;
     scene.add(ghostPlane);
 
-    const listener = new THREE.AudioListener();
-    camera.add( listener );
-    const sound = new THREE.Audio( listener );
-
-    const audioLoader = new THREE.AudioLoader();
-    audioLoader.load('../sfx/CombatMusic.mp3', function (buffer) {
-        sound.setBuffer( buffer );
-        sound.setLoop( true );
-        sound.setVolume( 0.2 )
-        sound.play();
-    })
+    playSound("../sfx/CombatMusic.mp3");
 
     const bar_tex = new THREE.TextureLoader().load( '../sprites/bar.png' );
     bar_tex.magFilter = THREE.NearestFilter
@@ -155,11 +145,12 @@ function onDocumentMouseDown( event ) {
             var x = mx-WORLD_MIN_X;
             var y = my-WORLD_MIN_Y;
             var buildSuccess = false;
-            playSound("../voices/HitOnMe.wav");
+
 		switch(buildType)
 		{
 			case 1:
 				buildSuccess = UIBuildRoom(buildType, new THREE.Vector2(x,y));
+                playSound("../sfx/BuildRoom.wav");
 				break;
 			case 3:
 				var room = DungeonRooms[x][y];
@@ -168,6 +159,7 @@ function onDocumentMouseDown( event ) {
 				scene.add(room.trap.sprite)
 				buildSuccess = true;
 				}
+                playSound("../sfx/BuildTrap.wav");
 				break;
 			case 4:
 				var room = DungeonRooms[x][y];
@@ -185,6 +177,7 @@ function onDocumentMouseDown( event ) {
 				room.trap = new Trap(1,2,x -3 ,y -3, room);
 				scene.add(room.trap.sprite)
 				buildSuccess = true;
+                playSound("../sfx/BuildTrap.wav");
 				break;
 
 		}
