@@ -46,8 +46,8 @@ function create_context(color,text){
     context.font = "bold 140px Arial";
     context.fillText(text,0,200);
     return context
-
 }
+
 function update_text(new_text, old_text, texture){
     old_text.clearRect(0, 0, 400, 200);
     old_text.fillText(new_text,10,200);
@@ -93,14 +93,14 @@ function init_gui(){
     PT_tp.position.y += 3.1;
 
     const icon = new THREE.PlaneGeometry(0.5, 0.5);
-    // const CB_tex = new THREE.TextureLoader().load( '../sprites/circuit_board.png' );
-    // CB_tex.magFilter = THREE.NearestFilter
-    // const CB_mt = new THREE.MeshBasicMaterial({ map: CB_tex });
-    // CB_mt.transparent = true;
-    // const circuit_board = new THREE.Mesh(icon, CB_mt);
-    // circuit_board.position.x = -5;
-    // circuit_board.position.y = 2.5;
-    // circuit_board.position.z= 3;
+    const CB_tex = new THREE.TextureLoader().load( '../sprites/circuit_board.png' );
+    CB_tex.magFilter = THREE.NearestFilter
+    const CB_mt = new THREE.MeshBasicMaterial({ map: CB_tex });
+    CB_mt.transparent = true;
+    const circuit_board = new THREE.Mesh(icon, CB_mt);
+    circuit_board.position.x = -5;
+    circuit_board.position.y = 2.5;
+    circuit_board.position.z= 3;
 
     const PT_tex = new THREE.TextureLoader().load( '../sprites/power_thing.png' );
     PT_tex.magFilter = THREE.NearestFilter
@@ -112,12 +112,12 @@ function init_gui(){
     power_thing.position.y = 3;
     
     update_text(power.toString(),PT_ctx,PT_t);
-    // update_text(circuit.toString(),CP_ctx,CP_t);
+    update_text(circuit.toString(),CP_ctx,CP_t);
 	
     scene.add(power_thing);
     scene.add(PT_tp);
-    // scene.add(circuit_board);
-    scene.add(CP_tp);
+    //scene.add(circuit_board);
+    //scene.add(CP_tp);
     scene.add(bar);
    
     gui = [null,null,null,null,null,null];
@@ -125,8 +125,8 @@ function init_gui(){
     gui[1] = bar;
     gui[2] = power_thing;
     gui[3] = PT_tp;
-    // gui[4] = circuit_board;
-    // gui[5] = CP_tp;
+    gui[4] = circuit_board;
+    gui[5] = CP_tp;
 
 
     document.body.appendChild(renderer.domElement);
@@ -142,16 +142,16 @@ function onDocumentMouseDown( event ) {
 	if(Build === true)
 	{
 
-        if (power >= ROOM_COSTP[buildType] && circuit >= ROOM_COSTC[buildType] && buildType > 0){
-
-            var x = mx-WORLD_MIN_X;
-            var y = my-WORLD_MIN_Y;
-            var buildSuccess = false;
+        if (power >= ROOM_COSTP[buildType] && circuit >= ROOM_COSTC[buildType] && buildType > 0)
+        {
+		var x = mx-WORLD_MIN_X;
+		var y = my-WORLD_MIN_Y;
+		var buildSuccess = false;
 		switch(buildType)
 		{
 			case 1:
 				buildSuccess = UIBuildRoom(buildType, new THREE.Vector2(x,y));
-                playSound("../sfx/BuildRoom.wav");
+				playSound("../sfx/BuildRoom.wav");
 				break;
 			case 3:
 				var room = DungeonRooms[x][y];
@@ -160,7 +160,7 @@ function onDocumentMouseDown( event ) {
 				scene.add(room.trap.sprite)
 				buildSuccess = true;
 				}
-                playSound("../sfx/BuildTrap.wav");
+				playSound("../sfx/BuildTrap.wav");
 				break;
 			case 4:
 				var room = DungeonRooms[x][y];
@@ -174,16 +174,16 @@ function onDocumentMouseDown( event ) {
 					console.log("Notice: Cannot build trap there, already another trap present");
 					break;
 				}
-                room.trap = new Trap(1,2,x -3 ,y -3, room);
-				        scene.add(room.trap.sprite)
-				        buildSuccess = true;
-                playSound("../sfx/BuildTrap.wav");
-                break;
+				room.trap = new Trap(1,2,x -3 ,y -3, room);
+				scene.add(room.trap.sprite)
+				buildSuccess = true;
+				playSound("../sfx/BuildTrap.wav");
+				break;
             case 5:
-                room = DungeonRooms[x][y];
-                if(!room.isBuilt)
+                var room = DungeonRooms[x][y];
+		if (room.isBuilt || room.trap == null)
                 {
-                    console.log("Notice: Cannot build trap there, the room there is not built.");
+                    console.log("Notice: Cannot build trap there.");
                     break;
                 }
                 if (!room.add_ally(scene,1,x,y))
@@ -194,10 +194,10 @@ function onDocumentMouseDown( event ) {
                 buildSuccess = true;
                 break;
             case 6:
-                room = DungeonRooms[x][y];
-                if(!room.isBuilt)
+                var room = DungeonRooms[x][y];
+		if (room.isBuilt || room.trap == null)
                 {
-                    console.log("Notice: Cannot build trap there, the room there is not built.");
+                    console.log("Notice: Cannot build trap there.");
                     break;
                 }
                 if (!room.add_ally(scene,0,x,y))
@@ -208,10 +208,10 @@ function onDocumentMouseDown( event ) {
                 buildSuccess = true;
                 break;
             case 9:
-                room = DungeonRooms[x][y];
-                if(!room.isBuilt)
+                var room = DungeonRooms[x][y];
+		if (room.isBuilt || room.trap == null)
                 {
-                    console.log("Notice: Cannot build trap there, the room there is not built.");
+                    console.log("Notice: Cannot build trap there.");
                     break;
                 }
                 if (!room.add_ally(scene,2,x,y))
@@ -269,7 +269,7 @@ function onDocumentMouseMove(event) {
 
 	//click and drag the map around
 	if (mouse_down){
-		for (let i =0; i < 6; i++){
+		for (let i =0; i < gui.length; i++){
 			if (gui[i] != null){
 				gui[i].position.x -= event.movementX * 0.01;
 				gui[i].position.y += event.movementY * 0.01;

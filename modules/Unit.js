@@ -2,7 +2,7 @@ import {mobManager} from './MobManager.js'
 import {PathHelper} from './PathHelper.js'
 import {DungeonRooms} from "./DungeonLayout.js"
 import {WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y} from "../modules/DungeonLayout.js"
-import {change_Power, camera} from "../modules/gui.js";
+import {modifyPower, camera} from "../modules/gui.js";
 import {playSound} from "../modules/SoundPlayer.js";
 
 
@@ -237,7 +237,7 @@ class Unit {
 	}
 
 	destroy() {
-		change_Power(5);
+		modifyPower(5);
 		this.mobState = MOBSTATE_NONE;
 		this.scene.remove(this.plane);
 		playSound('../sfx/EnemyDie.wav');
