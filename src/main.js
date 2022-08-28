@@ -2,7 +2,8 @@
 import WebGL from "../js/WebGL.js";
 import {init_gui,camera} from "../modules/gui.js"
 import { CreateWorld } from "../modules/create_world.js"
-import { mobManager } from "../modules/MobManager.js"
+import {mobManager} from "../modules/MobManager.js"
+import {waveManager} from "../modules/WavesManager.js"
 
 const clock = new THREE.Clock();
 let scene,renderer
@@ -19,15 +20,21 @@ function init(){
 	CreateWorld();
 
 	mobManager.init(scene);
+	
+	//waveManager = new WaveManager();
+	waveManager.init();
 
 	init_gui()
     
 }
 
 function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-    mobManager.Update(clock.getDelta());
+	var deltaTime = clock.getDelta();
+	
+	requestAnimationFrame(animate);
+	renderer.render(scene, camera);
+	mobManager.Update(deltaTime);
+	waveManager.Update(deltaTime);
 }
 
 function main() {

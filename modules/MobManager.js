@@ -9,7 +9,7 @@ class MobManager {
 	}
 	init(scene)
 	{
-		this.createEntranceMob();
+		//this.createEntranceMob();
 	}
 	createMobAt(startRoom)
 	{
