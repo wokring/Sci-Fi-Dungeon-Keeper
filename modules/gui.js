@@ -147,7 +147,6 @@ function onDocumentMouseDown( event ) {
             var x = mx-WORLD_MIN_X;
             var y = my-WORLD_MIN_Y;
             var buildSuccess = false;
-            let room;
 		switch(buildType)
 		{
 			case 1:
@@ -155,7 +154,7 @@ function onDocumentMouseDown( event ) {
                 playSound("../sfx/BuildRoom.wav");
 				break;
 			case 3:
-				room = DungeonRooms[x][y];
+				var room = DungeonRooms[x][y];
 				if (room.isBuilt && room.trap == null){
 				room.trap = new Spawner(room, [(scene, room)], 40, 4,x -3 ,y -3);
 				scene.add(room.trap.sprite)
@@ -164,7 +163,7 @@ function onDocumentMouseDown( event ) {
                 playSound("../sfx/BuildTrap.wav");
 				break;
 			case 4:
-				room = DungeonRooms[x][y];
+				var room = DungeonRooms[x][y];
 				if(!room.isBuilt)
 				{
 					console.log("Notice: Cannot build trap there, the room there is not built.");
