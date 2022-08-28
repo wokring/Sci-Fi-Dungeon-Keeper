@@ -9,14 +9,20 @@ class MobManager {
 	}
 	init(scene)
 	{
-		//console.log("MobManager:init()");
 		this.createEntranceMob();
+	}
+	createMobAt(startRoom)
+	{
+		var newMob = new Unit(scene, startRoom);
+		this.allMobs.push(newMob);
+		return newMob;
 	}
 	createEntranceMob()
 	{
 		var newMob = new Unit(scene, PathHelper.entranceRoom);
 		this.allMobs.push(newMob);
 		newMob.PathToTreasure();
+		return newMob;
 	}
 	getClosest(unit) {
 		if (this.mobs.length < 1) {

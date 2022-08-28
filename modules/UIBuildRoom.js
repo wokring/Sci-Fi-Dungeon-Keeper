@@ -2,12 +2,12 @@ import {DungeonRooms, update_dist} from "./DungeonLayout.js"
 import {DungeonRoom} from "./DungeonRoom.js"
 import {MapTile} from "./MapTile.js"
 import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
+import {mobManager} from "./MobManager.js"
 
 function UIBuildRoom(buildType, quantizedWorldCoords)
 {
 	//array safety checks
 	//console.log(quantizedWorldCoords);
-	console.log(quantizedWorldCoords.x)
 	if(quantizedWorldCoords.x >= DungeonRooms.length)
 	{
 		console.log("Error: attempted to index " + quantizedWorldCoords.x + 
@@ -43,8 +43,12 @@ function UIBuildRoom(buildType, quantizedWorldCoords)
 		return false;
 	}
 	chosenRoom.CreateMapTiles();
-
+	
 	update_dist()
+	
+	//for testing
+	//mobManager.createMobAt(chosenRoom).PathToTreasure();
+	
 	return true;
 
 }

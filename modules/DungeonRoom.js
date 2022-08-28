@@ -26,6 +26,7 @@ class DungeonRoom
 		this.trap = null;
 		this.spawn = [];
 		this.texture = [];
+		this.dist_to_treasure = 99999;
 	}
 	CreateMapTiles()
 	{
@@ -81,6 +82,46 @@ class DungeonRoom
 		// new MapTile(SOUTH, 	new THREE.Vector2(
 		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 1, 
 		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
+	}
+	getTreasureMoveTarget()
+	{
+		//are we the treasure room?
+		if(this.dist_to_treasure == 0)
+		{
+			return
+		}
+		
+		//grab the adjacent rooms
+		var adjRooms = this.getAdjacentRooms();
+		if(adjRooms.length == 0)
+		{
+			//todo: error checking
+			return;
+		}
+		
+		//find which one has the lowest dist
+		var closeRoom = null;
+		for(var i=0; i<adjRooms.length; i++)
+		{
+			var checkRoom = adjRooms[i]
+			if(closeRoom == null)
+			{
+				//we dont have a target yet
+				closeRoom = checkRoom;
+			}
+			else if(checkRoom.dist_to_treasure < closeRoom.dist_to_treasure)
+			{
+				//this next room is closer than the previous one we checked
+				closeRoom = checkRoom;
+			}
+		}
+		return closeRoom.myWorldCoords;
+	}
+	getEntranceMoveTarget()
+	{
+	}
+	getWanderMoveTarget()
+	{
 	}
 	getCentre()
 	{
