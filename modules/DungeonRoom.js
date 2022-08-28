@@ -1,6 +1,8 @@
 import {MapTile} from "./MapTile.js"
 import {WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y,DungeonRooms} from "../modules/DungeonLayout.js"
 import { scene } from "../src/main.js";
+import { Ally } from "./Ally.js";
+import { change_Power } from "./gui.js";
 
 const NORTH = 1;
 const SOUTH = 2;
@@ -24,7 +26,7 @@ class DungeonRoom
         
 		this.units_present = [];
 		this.trap = null;
-		this.spawn = [];
+		this.ally = [null,null,null,null];
 		this.texture = [];
 		this.sprite = null;
 		this.dist_to_treasure = 99999;
@@ -35,7 +37,7 @@ class DungeonRoom
 		this.isBuilt = true;
 
 		let room_tex = new THREE.TextureLoader().load( '../sprites/room.png' );
-		if (this.myDungeonIndex.x === 3 && this.myDungeonIndex.y === 3) {
+		if (this.myDungeonIndex.x == 0 && this.myDungeonIndex.y == 3) {
 			room_tex = new THREE.TextureLoader().load( '../sprites/spawn_room.png' );
 		} else if (this.myDungeonIndex.x === 4 && this.myDungeonIndex.y === 4) {
 			room_tex = new THREE.TextureLoader().load( '../sprites/trophy_room.png' );
@@ -59,7 +61,6 @@ class DungeonRoom
 		{
 			return
 		}
-		
 		//grab the adjacent rooms
 		var adjRooms = this.getAdjacentRooms();
 		if(adjRooms.length === 0)
@@ -136,6 +137,17 @@ class DungeonRoom
 		}
 		return rooms;
 	}
+	add_ally(s,t,x,y) {
+		for(var i =0; i < 4; i++) {
+			if (this.ally[i] == null){
+				this.ally[i] = new Ally(s,t,x,y);
+				return true;
+			}
+		}
+		return false;
+
+	}
+
 	onMobEnter(mob)
 	{
 		this.units_present.push(mob);
@@ -150,7 +162,38 @@ class DungeonRoom
 				mob.dungeonRoom = this;
 			}
 
+		} 
+		else if (mob.dungeonRoom.myDungeonIndex.x == 4 && mob.dungeonRoom.myDungeonIndex.y == 4) {
+			change_Power(-10);
 		}
+
+		for(var i =0; i < 4; i++) {
+			if (this.ally[i] != null){
+				mob.mobState = 3;
+			}
+		}
+		//console.log("maptile #" + this.id + " entered by mob #" + mob.id);
+
+	}
+	combat(mob) {
+		var in_compat = 1;
+		for(var i =0; i < 4; i++) {
+			if (this.ally[i] != null){
+				mob.health -= this.ally[i].attack;
+				this.ally[i].health -= mob.attack;
+				if(mob.health <= 0){
+					mob.dungeonRoom = null;
+					mob.destroy();
+					return;
+				}
+				if(this.ally[i].health <= 0){
+					this.ally[i].destroy();
+					this.ally[i] = null
+				}
+				in_compat = 3
+			}
+		}
+		return in_compat
 	}
 	onMobExit(mob)
 	{

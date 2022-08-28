@@ -9,6 +9,7 @@ import { RoomTree, RoomNode } from "../modules/RoomTree.js"
 import {DungeonRooms} from "../modules/DungeonLayout.js"
 import { MapTile } from "../modules/MapTile.js"
 import { UIBuildRoom } from "../modules/UIBuildRoom.js"
+import { Ally } from "./Ally.js";
 import {playSound} from "../modules/SoundPlayer.js";
 
 const ROOM_COSTP = [1000,5,3,4,1,2,3,4,5,100]
@@ -26,7 +27,7 @@ const GHOST_BUILD_Z = 4;
 const frustumSize = 10;
 
 var power = 1000;
-var circuit = 200;
+var circuit = '';
 
 // var ROOM_COSTP = 10
 // var ROOM_COSTC = 2
@@ -54,6 +55,7 @@ function update_text(new_text, old_text, texture){
 }
 
 function init_gui(){
+    DungeonRooms[4][3].add_ally(scene,2,4,3);
 
     aspect = window.innerWidth / window.innerHeight;
         
@@ -91,14 +93,14 @@ function init_gui(){
     PT_tp.position.y += 3.1;
 
     const icon = new THREE.PlaneGeometry(0.5, 0.5);
-    const CB_tex = new THREE.TextureLoader().load( '../sprites/circuit_board.png' );
-    CB_tex.magFilter = THREE.NearestFilter
-    const CB_mt = new THREE.MeshBasicMaterial({ map: CB_tex });
-    CB_mt.transparent = true;
-    const circuit_board = new THREE.Mesh(icon, CB_mt);
-    circuit_board.position.x = -5;
-    circuit_board.position.y = 2.5;
-    circuit_board.position.z= 3;
+    // const CB_tex = new THREE.TextureLoader().load( '../sprites/circuit_board.png' );
+    // CB_tex.magFilter = THREE.NearestFilter
+    // const CB_mt = new THREE.MeshBasicMaterial({ map: CB_tex });
+    // CB_mt.transparent = true;
+    // const circuit_board = new THREE.Mesh(icon, CB_mt);
+    // circuit_board.position.x = -5;
+    // circuit_board.position.y = 2.5;
+    // circuit_board.position.z= 3;
 
     const PT_tex = new THREE.TextureLoader().load( '../sprites/power_thing.png' );
     PT_tex.magFilter = THREE.NearestFilter
@@ -110,11 +112,11 @@ function init_gui(){
     power_thing.position.y = 3;
     
     update_text(power.toString(),PT_ctx,PT_t);
-    update_text(circuit.toString(),CP_ctx,CP_t);
+    // update_text(circuit.toString(),CP_ctx,CP_t);
 	
     scene.add(power_thing);
     scene.add(PT_tp);
-    scene.add(circuit_board);
+    // scene.add(circuit_board);
     scene.add(CP_tp);
     scene.add(bar);
    
@@ -123,8 +125,8 @@ function init_gui(){
     gui[1] = bar;
     gui[2] = power_thing;
     gui[3] = PT_tp;
-    gui[4] = circuit_board;
-    gui[5] = CP_tp;
+    // gui[4] = circuit_board;
+    // gui[5] = CP_tp;
 
 
     document.body.appendChild(renderer.domElement);
@@ -173,18 +175,60 @@ function onDocumentMouseDown( event ) {
 					console.log("Notice: Cannot build trap there, already another trap present");
 					break;
 				}
-				
-				room.trap = new Trap(1,2,x -3 ,y -3, room);
-				scene.add(room.trap.sprite)
-				buildSuccess = true;
+                room.trap = new Trap(1,2,x -3 ,y -3, room);
+				        scene.add(room.trap.sprite)
+				        buildSuccess = true;
                 playSound("../sfx/BuildTrap.wav");
+                break;
+            case 5:
+                room = DungeonRooms[x][y];
+                if(!room.isBuilt)
+                {
+                    console.log("Notice: Cannot build trap there, the room there is not built.");
+                    break;
+                }
+                if (!room.add_ally(scene,1,x,y))
+                {
+                    console.log("Notice: nor room");
+                    break;
+                }
+                buildSuccess = true;
+                break;
+            case 6:
+                room = DungeonRooms[x][y];
+                if(!room.isBuilt)
+                {
+                    console.log("Notice: Cannot build trap there, the room there is not built.");
+                    break;
+                }
+                if (!room.add_ally(scene,0,x,y))
+                {
+                    console.log("Notice: nor room");
+                    break;
+                }
+                buildSuccess = true;
+                break;
+            case 9:
+                room = DungeonRooms[x][y];
+                if(!room.isBuilt)
+                {
+                    console.log("Notice: Cannot build trap there, the room there is not built.");
+                    break;
+                }
+                if (!room.add_ally(scene,2,x,y))
+                {
+                    console.log("Notice: nor room");
+                    break;
+                }
+				buildSuccess = true;
 				break;
 
 		}
             if(buildSuccess)
             {
+                console.log(buildType);
                 power -= ROOM_COSTP[buildType];
-                circuit -= ROOM_COSTC[buildType];
+                // circuit -= ROOM_COSTC[buildType];
             }
         }
         //exit room construction mode
@@ -192,7 +236,7 @@ function onDocumentMouseDown( event ) {
         Build = false
         ghostPlane.position.z = CAMERA_HIDDEN_Z;
         update_text(power.toString(),PT_ctx,PT_t);
-        update_text(circuit.toString(),CP_ctx,CP_t);
+        // update_text(circuit.toString(),CP_ctx,CP_t);
         
 	}
     
@@ -264,9 +308,29 @@ function onDocumentKeyDown(event) {
             Build = true;
             buildType = 3;
             break;
+        case "f":
+            ghostPlane.position.z = GHOST_BUILD_Z;
+            Build = true;
+            buildType = 9;
+            break;
+        case "k":
+            ghostPlane.position.z = GHOST_BUILD_Z;
+            Build = true;
+            buildType = 5;
+            break;
+        case "i":
+            ghostPlane.position.z = GHOST_BUILD_Z;
+            Build = true;
+            buildType = 6;
+            break;
         default:
             break;
     }
 }
 
-export {init_gui,camera,aspect,frustumSize};
+function change_Power(value) {
+    power += value;
+    update_text(power.toString(),PT_ctx,PT_t);
+}
+
+export {init_gui,camera,aspect,frustumSize,change_Power};
