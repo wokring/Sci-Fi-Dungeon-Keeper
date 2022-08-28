@@ -137,7 +137,7 @@ function init_gui(){
 function onDocumentMouseDown( event ) {
 	mouse_down = true;    
 
-	if(Build == true)
+	if(Build === true)
 	{
 
         if (power >= ROOM_COSTP[buildType] && circuit >= ROOM_COSTC[buildType] && buildType > 0){
@@ -145,7 +145,7 @@ function onDocumentMouseDown( event ) {
             var x = mx-WORLD_MIN_X;
             var y = my-WORLD_MIN_Y;
             var buildSuccess = false;
-
+            let room;
 		switch(buildType)
 		{
 			case 1:
@@ -153,7 +153,7 @@ function onDocumentMouseDown( event ) {
                 playSound("../sfx/BuildRoom.wav");
 				break;
 			case 3:
-				var room = DungeonRooms[x][y];
+				room = DungeonRooms[x][y];
 				if (room.isBuilt && room.trap == null){
 				room.trap = new Spawner(room, [(scene, room)], 40, 4,x -3 ,y -3);
 				scene.add(room.trap.sprite)
@@ -162,7 +162,7 @@ function onDocumentMouseDown( event ) {
                 playSound("../sfx/BuildTrap.wav");
 				break;
 			case 4:
-				var room = DungeonRooms[x][y];
+				room = DungeonRooms[x][y];
 				if(!room.isBuilt)
 				{
 					console.log("Notice: Cannot build trap there, the room there is not built.");
@@ -235,10 +235,9 @@ function onDocumentMouseMove(event) {
 	}
 	
 	//update the position of the construction ghost
-	if (Build == true){
+	if (Build === true){
 		ghostPlane.position.x = mx;
 		ghostPlane.position.y = my;
-		//console.log("animate() ghost:" + ghost.position.x + "," + ghost.position.x);
 	}
 }
 
