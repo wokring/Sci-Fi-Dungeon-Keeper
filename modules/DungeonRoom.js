@@ -1,6 +1,7 @@
 import {MapTile} from "./MapTile.js"
 import {WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y,DungeonRooms} from "../modules/DungeonLayout.js"
-import { scene } from "../src/main.js";
+import {scene} from "../src/main.js";
+import {modifyPower} from "../modules/gui.js"
 
 const NORTH = 1;
 const SOUTH = 2;
@@ -11,6 +12,8 @@ const FLOOR_A = 1;
 const FLOOR_B = 2;
 const FLOOR_C = 3;
 const FLOOR_D = 4;
+
+var steal_audio = new Audio('../sfx/EnemyStealPower.wav');
 
 class DungeonRoom
 {
@@ -85,6 +88,7 @@ class DungeonRoom
 	}
 	getTreasureMoveTarget()
 	{
+		//console.log("getTreasureMoveTarget");
 		//are we the treasure room?
 		if(this.dist_to_treasure == 0)
 		{
@@ -119,9 +123,18 @@ class DungeonRoom
 	}
 	getEntranceMoveTarget()
 	{
+		//
 	}
 	getWanderMoveTarget()
 	{
+		//console.log("getWanderMoveTarget");
+		var adjRooms = this.getAdjacentRooms(true);
+		if(adjRooms.length > 0)
+		{
+			var index = Math.floor(Math.random() * adjRooms.length);
+			return adjRooms[index].myWorldCoords;
+		}
+		
 	}
 	getCentre()
 	{
@@ -140,7 +153,7 @@ class DungeonRoom
 		var myCentre = this.getCentre();
 		return Math.atan2(otherCentre.x - myCentre.x, otherCentre.y - myCentre.y);
 	}
-	getAdjacentRooms()
+	getAdjacentRooms(requireWalkable=false)
 	{
 		var rooms = new Array();
 		
@@ -148,45 +161,62 @@ class DungeonRoom
 		if(this.myDungeonIndex.y < DungeonRooms[this.myDungeonIndex.x].length - 1)
 		{
 			const adjRoom = DungeonRooms[this.myDungeonIndex.x][this.myDungeonIndex.y + 1];
-			rooms.push(adjRoom);
+			//console.log("north:" + adjRoom.dist_to_treasure);
+			if(!requireWalkable || adjRoom.dist_to_treasure < 999)
+				rooms.push(adjRoom);
 		}
 		
 		//SOUTH
 		if(this.myDungeonIndex.y > 0)
 		{
 			const adjRoom = DungeonRooms[this.myDungeonIndex.x][this.myDungeonIndex.y - 1];
-			rooms.push(adjRoom);
+			//console.log("south:" + adjRoom.dist_to_treasure);
+			if(!requireWalkable || adjRoom.dist_to_treasure < 999)
+				rooms.push(adjRoom);
 		}
 		
 		//EAST
 		if(this.myDungeonIndex.x < DungeonRooms.length - 1)
 		{
 			const adjRoom = DungeonRooms[this.myDungeonIndex.x + 1][this.myDungeonIndex.y];
-			rooms.push(adjRoom);
+			//console.log("east:" + adjRoom.dist_to_treasure);
+			if(!requireWalkable || adjRoom.dist_to_treasure < 999)
+				rooms.push(adjRoom);
 		}
 
 		//WEST
 		if(this.myDungeonIndex.x > 0)
 		{
 			const adjRoom = DungeonRooms[this.myDungeonIndex.x - 1][this.myDungeonIndex.y];
-			rooms.push(adjRoom);
+			//console.log("west:" + adjRoom.dist_to_treasure);
+			if(!requireWalkable || adjRoom.dist_to_treasure < 999)
+				rooms.push(adjRoom);
 		}
 		return rooms;
 	}
 	onMobEnter(mob)
 	{
 		this.units_present.push(mob);
-		if (this.trap !== null) {
-			this.trap.doHit(mob);
-			if (mob.health <= 0) {
-				//mob is killed
-				this.units_present = this.units_present.filter(unit => unit !== mob);
-				mob.dungeonRoom = null;
-				mob.destroy();
-			} else {
-				mob.dungeonRoom = this;
+		if(mob.isEnemy)
+		{
+			if (this.trap != null)
+			{
+				this.trap.doHit(mob);
+				if (mob.health <= 0) {
+					//mob is killed
+					this.units_present = this.units_present.filter(unit => unit !== mob);
+					mob.dungeonRoom = null;
+					mob.destroy();
+				} else {
+					mob.dungeonRoom = this;
+				}
 			}
-
+			if(this.dist_to_treasure == 0)
+			{
+				steal_audio.play()
+				modifyPower(-25);
+				mob.takeDamage(9999);
+			}
 		}
 		//console.log("maptile #" + this.id + " entered by mob #" + mob.id);
 	}
