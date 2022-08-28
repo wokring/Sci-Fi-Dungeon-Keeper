@@ -6,7 +6,8 @@ class WaveManager
 	{
 		this.waveNum = 0;
 		this.tLeftWave = 1;
-		this.tBetweenWaves = 1;
+		this.tBetweenWaves = 3;
+
 		this.spawnsPerWave = 6 ;
 		this.tLeftSpawn = 0;
 		this.tBetweenSpawn = 0.75;
