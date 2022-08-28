@@ -94,7 +94,10 @@ class Unit {
 				if(sqrDist <= 0.01)
 				{
 					//this.invalidateCurrentMoveTarget();
-					this.currentMoveTarget = this.dungeonRoom.getTreasureMoveTarget();
+					if(this.dungeonRoom != null)
+					{
+						this.currentMoveTarget = this.dungeonRoom.getTreasureMoveTarget();
+					}
 					
 					//have we got more path nodes to get to?
 					if(this.currentMoveTarget != null)
@@ -175,7 +178,14 @@ class Unit {
 		this.plane = new THREE.Mesh( geometry, material );
 		this.plane.position.z = UNIT_Z;
 	}
-
+	takeDamage(damage)
+	{
+		this.health -= damage;
+		if(this.health <= 0)
+		{
+			this.destroy();
+		}
+	}
 	changeSprite() {
 		this.plane.material.color.setHex( 0xff0000 );
 		setTimeout(function () {
@@ -184,7 +194,7 @@ class Unit {
 	}
 
 	destroy() {
-		this.mobState = MOBSTATE_UNKNOWN;
+		this.mobState = MOBSTATE_NONE;
 		this.scene.remove(this.plane);
 	}
     /*
