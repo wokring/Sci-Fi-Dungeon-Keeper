@@ -29,17 +29,8 @@ var DungeonFactory = (function(){
 			this.units = [];
 			this.dist = init_distoT();
 		}
-		getRoom(position) {
-			return this.rooms[position[0]][position[1]]
-		}
-		addUnit(unit, position) {
-			unit.room = position;
-			// when the room coordas are defined, change position to the entrance the unit came from
-			this.rooms[position[0]][position[1]].units.push(unit);
-			this.units.push(unit);
-		}
 	}
-  
+
 	var instance;
   
 	return {
@@ -66,7 +57,6 @@ function init_distoT(){
 	dist[treasurex][treasurey] = 0;
 	dist[4][3] = 1;
 	dist[3][3] = 2;
-	//console.log(dist)
 	return dist;
 }
 
@@ -125,49 +115,21 @@ function BuildDungeon()
 	power_source.position.z = DOODAD_Z;
 	power_source.position.y = treasurey + WORLD_MIN_Y;
 	scene.add(power_source);
+
 	DungeonRooms[4][3].CreateMapTiles();
 	DungeonRooms[3][3].CreateMapTiles();
 	DungeonRooms[2][3].CreateMapTiles();
 	DungeonRooms[1][3].CreateMapTiles();
 	DungeonRooms[0][3].CreateMapTiles();
-	
-	// for(var j=0; j<DUNGEON_HEIGHT; j++)
-	// {
-	// 	const curRoom = DungeonRooms[i][j];
-	// 	if(j == 0)
-	// 	{
-	// 		//our treasure room
-	// 		PathHelper.treasureRoom = curRoom;
-	// 	}
-	// 	else if(j == DUNGEON_HEIGHT - 1)
-	// 	{
-	// 		//our spawning room
-	// 		PathHelper.entranceRoom = curRoom;
-	// 	}
-	// 	curRoom.CreateMapTiles();
-	// }
+
 	PathHelper.treasureRoom = DungeonRooms[treasurex][treasurey];
 	PathHelper.treasureRoom.dist_to_treasure = 0;
 	PathHelper.entranceRoom = DungeonRooms[0][3];
 	
 	//setup the path weightings
 	update_dist();
-	//console.log(dist);
-	
-	/*
-	var myRoom = DungeonRooms[3][3];
-	const template = [10,10,10,1,1,1,null,[0,1],[-1,3]]
-	var mySpawner = new Spawner(myRoom, template, 2, 5);
-	var manager = new SpawnManager();
-	manager.addSpawn(mySpawner);*/
-
-
 	return DungeonRooms
 }
-
-
-
-
 export { BuildDungeon, DungeonRooms, DungeonFactory,update_dist,
 	WORLD_MIN_X, 
 	WORLD_MIN_Y,
