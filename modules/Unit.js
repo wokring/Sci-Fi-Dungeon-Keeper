@@ -16,7 +16,9 @@ class Unit {
 	constructor(scene, startDungeonRoom)
 	{
 		this.id = Unit.nextId++;
+		this.health = 5;
 		this.makeSprite()
+		this.scene = scene;
 		scene.add(this.plane)
 		this.mobState = MOBSTATE_NONE;
 		//this.currentPath = new Array();
@@ -105,7 +107,6 @@ class Unit {
 						this.mobState = MOBSTATE_NONE;
 					}
 				}
-				break;
 			}
 		}
 	}
@@ -170,6 +171,18 @@ class Unit {
 		this.plane = new THREE.Mesh( geometry, material );
 		this.plane.position.z = UNIT_Z;
 	}
+
+	changeSprite() {
+		this.plane.material.color.setHex( 0xff0000 );
+		setTimeout(function () {
+			this.plane.material.color.setHex( 0xffff00 )
+		}.bind(this),500);
+	}
+
+	destroy() {
+		this.mobState = MOBSTATE_UNKNOWN;
+		this.scene.remove(this.plane);
+	}
     /*
     constructor(cost, health, damage, interval, speed, range, scene, room = [0,1], pos = [0,0], level = 1) {
         this.cost = cost
@@ -226,14 +239,14 @@ class Unit {
         this._damage = value / (2^(this.level - 1));
     }
     */
-    getHit(damage, debuff = [1, 1]) {
-        if (this.damage - damage <= 0) {
-            mobManager.killUnit(this)
-        } else {
-            this.damage -= damage;
-        }
-        this.debuff = debuff;
-    }
+    // getHit(damage, debuff = [1, 1]) {
+    //     if (this.health - damage <= 0) {
+    //         mobManager.killUnit(this)
+    //     } else {
+    //         this.health -= damage;
+    //     }
+    //     this.debuff = debuff;
+    // }
     resetDebuff() {
         this.debuff = [1, 1]
     }

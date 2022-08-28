@@ -3,10 +3,21 @@ import {mobManager} from "../modules/MobManager.js";
 import {scene} from "../src/main.js"
 
 class Spawner{
-    constructor(room, unitTemplate, spawnSpan, spawnLimit) {
+    constructor(room, unitTemplate, spawnSpan, spawnLimit,x, y) {
         this._room = room;
         this._template = unitTemplate;
         this._units = [];
+
+        const spawner_tex = new THREE.TextureLoader().load( '../sprites/spawner.png' );
+        spawner_tex.magFilter = THREE.NearestFilter
+        const spawner_mt= new THREE.MeshBasicMaterial({ map: spawner_tex });
+        spawner_mt.transparent = true;
+        const plane = new THREE.PlaneGeometry(0.6, 0.6);
+        const spawner = new THREE.Mesh(plane, spawner_mt);
+        spawner.position.x = x;
+        spawner.position.y = y;
+        spawner.position.z = 0;
+        this.sprite = spawner;
 
         this._spawnSpan = spawnSpan;
         this._timeUntilNextSpawn = spawnSpan;
