@@ -2,6 +2,8 @@ import {mobManager} from './MobManager.js'
 import {PathHelper} from './PathHelper.js'
 import {DungeonRooms} from "./DungeonLayout.js"
 import {WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y} from "../modules/DungeonLayout.js"
+import {camera} from "../modules/gui.js";
+import {playSound} from "../modules/SoundPlayer.js";
 
 const UNIT_SPRITE_WIDTH = 0.2;
 const UNIT_SPRITE_HEIGHT = 0.2;
@@ -184,8 +186,9 @@ class Unit {
 	}
 
 	destroy() {
-		this.mobState = MOBSTATE_UNKNOWN;
+		this.mobState = MOBSTATE_NONE;
 		this.scene.remove(this.plane);
+		playSound('../voices/roblox_oof.wav');
 	}
     /*
     constructor(cost, health, damage, interval, speed, range, scene, room = [0,1], pos = [0,0], level = 1) {

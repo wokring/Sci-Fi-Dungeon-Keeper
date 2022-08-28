@@ -1,6 +1,8 @@
 import { RoomTree, RoomNode } from "../modules/RoomTree.js"
 import {DungeonRoom} from "../modules/DungeonRoom.js"
 import {scene} from "../src/main.js";
+import {camera} from "../modules/gui.js";
+import {playSound} from "../modules/SoundPlayer.js";
 
 class Trap {
     constructor(uses, damage,x,y, room) {
@@ -22,6 +24,7 @@ class Trap {
         if (this.uses){
             unit.health -= this.damage;
             unit.changeSprite();
+            playSound("../voices/minecraft_hit_soundmp3converter.mp3");
             this.uses -= 1;
         }
         if (this.uses <= 0) {
