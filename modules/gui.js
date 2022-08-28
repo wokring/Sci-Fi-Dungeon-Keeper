@@ -10,6 +10,7 @@ import {DungeonRooms} from "../modules/DungeonLayout.js"
 import { MapTile } from "../modules/MapTile.js"
 import { UIBuildRoom } from "../modules/UIBuildRoom.js"
 import { Ally } from "./Ally.js";
+import {playSound} from "../modules/SoundPlayer.js";
 
 const ROOM_COSTP = [1000,5,3,4,1,2,3,4,5,100]
 //const ROOM_COSTC = [1000,10,3,4,3,2,3,4,5,50]
@@ -65,6 +66,7 @@ function init_gui(){
     ghostPlane.position.z = CAMERA_HIDDEN_Z;
     scene.add(ghostPlane);
 
+    playSound("../sfx/CombatMusic.mp3");
 
     const bar_tex = new THREE.TextureLoader().load( '../sprites/bar.png' );
     bar_tex.magFilter = THREE.NearestFilter
@@ -145,10 +147,12 @@ function onDocumentMouseDown( event ) {
             var x = mx-WORLD_MIN_X;
             var y = my-WORLD_MIN_Y;
             var buildSuccess = false;
+
 		switch(buildType)
 		{
 			case 1:
-				buildSuccess = UIBuildRoom(buildType, new THREE.Vector2(x,y)); 
+				buildSuccess = UIBuildRoom(buildType, new THREE.Vector2(x,y));
+                playSound("../sfx/BuildRoom.wav");
 				break;
 			case 3:
 				var room = DungeonRooms[x][y];
@@ -157,6 +161,7 @@ function onDocumentMouseDown( event ) {
 				scene.add(room.trap.sprite)
 				buildSuccess = true;
 				}
+                playSound("../sfx/BuildTrap.wav");
 				break;
 			case 4:
 				var room = DungeonRooms[x][y];
@@ -171,8 +176,8 @@ function onDocumentMouseDown( event ) {
 					break;
 				}
                 room.trap = new Trap(1,2,x -3 ,y -3, room);
-				scene.add(room.trap.sprite)
-				buildSuccess = true;
+				        scene.add(room.trap.sprite)
+				        buildSuccess = true;
                 playSound("../sfx/BuildTrap.wav");
                 break;
             case 5:

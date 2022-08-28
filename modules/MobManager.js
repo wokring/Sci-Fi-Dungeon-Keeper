@@ -2,6 +2,7 @@ import {DungeonFactory} from '../modules/DungeonLayout.js'
 import {Unit} from '../modules/Unit.js'
 import {PathHelper} from "./PathHelper.js"
 import {scene} from "../src/main.js"
+import {playSound} from "../modules/SoundPlayer.js";
 
 class MobManager {
 	constructor() {
@@ -9,7 +10,7 @@ class MobManager {
 	}
 	init(scene)
 	{
-		this.createEntranceMob();
+		//this.createEntranceMob();
 	}
 	createMobAt(startRoom)
 	{
@@ -22,6 +23,7 @@ class MobManager {
 		var newMob = new Unit(scene, PathHelper.entranceRoom);
 		this.allMobs.push(newMob);
 		newMob.PathToTreasure();
+		playSound("../sfx/EnemySpawn.wav");
 		return newMob;
 	}
 	getClosest(unit) {
