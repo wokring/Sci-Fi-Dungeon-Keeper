@@ -2,6 +2,8 @@ import {DungeonRoom} from "./DungeonRoom.js"
 import {Spawner, SpawnManager} from "../modules/Spawner.js";
 import {PathHelper} from "./PathHelper.js"
 import {scene} from "../src/main.js"
+import {Unit} from "../modules/Unit.js";
+import {Trap} from "../modules/Trap.js";
 
 
 
@@ -9,6 +11,8 @@ const treasurex = 4
 const treasurey = 4
 var DungeonRooms = [];
 var dist = [];
+=======
+
 const DUNGEON_HEIGHT = 8;
 const DUNGEON_WIDTH = 8;
 const WORLD_MIN_X = -3;
@@ -60,14 +64,12 @@ function init_distoT(){
 	dist[treasurex][treasurey] = 0;
 	dist[4][3] = 1;
 	dist[3][3] = 2;
-	console.log(dist)
 	return dist;
 }
 
 
 function update_dist (){
 	update_dist_room(treasurex,treasurey);
-	console.log(dist)
 
 }
 
@@ -107,6 +109,7 @@ function BuildDungeon()
 	
 	//setup the starting rooms
 	var i = Math.ceil(DUNGEON_WIDTH/2);
+
 	DungeonRooms[treasurex][treasurey].CreateMapTiles();
 	const plane = new THREE.PlaneGeometry(0.75, 0.75);
 	const PS_tex = new THREE.TextureLoader().load( '../sprites/power_source.png' );
@@ -142,6 +145,7 @@ function BuildDungeon()
 	var mySpawner = new Spawner(myRoom, template, 2, 5);
 	var manager = new SpawnManager();
 	manager.addSpawn(mySpawner);
+
 
 	return DungeonRooms
 }
