@@ -206,7 +206,7 @@ class Unit {
 	destroy() {
 		this.mobState = MOBSTATE_NONE;
 		this.scene.remove(this.plane);
-		playSound('../voices/roblox_oof.wav');
+		playSound('../sfx/EnemyDie.wav');
 	}
     /*
     constructor(cost, health, damage, interval, speed, range, scene, room = [0,1], pos = [0,0], level = 1) {

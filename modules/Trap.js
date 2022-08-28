@@ -24,7 +24,7 @@ class Trap {
         if (this.uses){
             unit.takeDamage(this.damage);
             unit.changeSprite();
-            playSound("../voices/minecraft_hit_soundmp3converter.mp3");
+            playSound("../sfx/TrapHit.wav");
             this.uses -= 1;
         }
         if (this.uses <= 0) {
