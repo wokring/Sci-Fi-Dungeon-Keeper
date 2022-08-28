@@ -29,13 +29,21 @@ class DungeonRoom
 		this.trap = null;
 		this.spawn = [];
 		this.texture = [];
+		this.sprite = null;
 		this.dist_to_treasure = 99999;
 	}
 	CreateMapTiles()
 	{
 		//play sfx for build success
 		this.isBuilt = true;
-		const room_tex = new THREE.TextureLoader().load( '../sprites/room.png' );
+
+		let room_tex = new THREE.TextureLoader().load( '../sprites/room.png' );
+		if (this.myDungeonIndex.x == 0 && this.myDungeonIndex.y == 3) {
+			room_tex = new THREE.TextureLoader().load( '../sprites/spawn_room.png' );
+		} else if (this.myDungeonIndex.x === 4 && this.myDungeonIndex.y === 4) {
+			room_tex = new THREE.TextureLoader().load( '../sprites/trophy_room.png' );
+		}
+		
 		room_tex.magFilter = THREE.NearestFilter
         const room_mt= new THREE.MeshBasicMaterial({ map: room_tex });
         room_mt.transparent = true;
@@ -46,58 +54,19 @@ class DungeonRoom
         room.position.z = -1;
         this.sprite = room;
 		scene.add(this.sprite);
-		// new MapTile(SOUTH|WEST,new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
-		// new MapTile(WEST, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 1), FLOOR_C);
-		// new MapTile(WEST, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 3), FLOOR_D);
-		
-		// new MapTile(NORTH|WEST,new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
-		// new MapTile(NORTH,	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 1, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
-		// new MapTile(NORTH, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 3, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
-		
-		// new MapTile(NORTH|EAST,new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
-		// new MapTile(EAST, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 3), FLOOR_A);
-		// new MapTile(EAST, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 1), FLOOR_B);
-		
-		// new MapTile(SOUTH|EAST,new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
-		// new MapTile(SOUTH, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 3, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
-		// new MapTile(SOUTH, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 1, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
 	}
 	getTreasureMoveTarget()
 	{
 		//console.log("getTreasureMoveTarget");
 		//are we the treasure room?
-		if(this.dist_to_treasure == 0)
+		if(this.dist_to_treasure === 0)
 		{
 			return
 		}
 		
 		//grab the adjacent rooms
 		var adjRooms = this.getAdjacentRooms();
-		if(adjRooms.length == 0)
+		if(adjRooms.length === 0)
 		{
 			//todo: error checking
 			return;
@@ -218,7 +187,6 @@ class DungeonRoom
 				mob.takeDamage(9999);
 			}
 		}
-		//console.log("maptile #" + this.id + " entered by mob #" + mob.id);
 	}
 	onMobExit(mob)
 	{
@@ -226,7 +194,6 @@ class DungeonRoom
 		{
 			this.units_present.splice(this.units_present.indexOf(mob),1);
 			mob.dungeonRoom = null;
-			//console.log("maptile #" + this.id + " exited by mob #" + mob.id);
 		}
 	}
 }

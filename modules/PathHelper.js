@@ -7,8 +7,8 @@ class PathHelper
 	static GetPathToTreasure(startDungeonRoom)
 	{
 		//hardcoded preset path
-		return new Array(DungeonRooms[4][7],DungeonRooms[4][6],DungeonRooms[4][5],DungeonRooms[4][4],
-			DungeonRooms[4][3],DungeonRooms[4][2],DungeonRooms[4][1],DungeonRooms[4][0]);
+		return [DungeonRooms[4][7],DungeonRooms[4][6],DungeonRooms[4][5],DungeonRooms[4][4],
+			DungeonRooms[4][3],DungeonRooms[4][2],DungeonRooms[4][1],DungeonRooms[4][0]];
 		//return this.GetPath(startDungeonRoom, this.treasureRoom);
 	}
 	static GetPathToEntrance(startDungeonRoom)
@@ -44,7 +44,7 @@ class PathHelper
 				var curRoom = adjRooms[i];
 				
 				//check if this room is our destination
-				if(curRoom == endDungeonRoom)
+				if(curRoom === endDungeonRoom)
 				{
 					//we can successfully finish
 					//path.push(curRoom);
@@ -60,7 +60,7 @@ class PathHelper
 					for(var j=0; j<checkedNodes.length; j++)
 					{
 						var checkNode = checkedNodes[j];
-						if(checkNode.dungeonRoom == curRoom)
+						if(checkNode.dungeonRoom === curRoom)
 						{
 							alreadyChecked = true;
 							break;
@@ -73,7 +73,7 @@ class PathHelper
 						var nextDist = curNode.dungeonRoom.getSqrdDist(curRoom);
 						var newNode = new astar_node(curRoom,curNode.prev_dist + 1, nextDist);
 						
-						if(uncheckednodes.length == 0)
+						if(uncheckednodes.length === 0)
 						{
 							uncheckednodes.push(newNode);
 						}
@@ -96,7 +96,6 @@ class PathHelper
 				}
 			}
 		}
-		//console.log(path);
 		return path;
 	}
 }

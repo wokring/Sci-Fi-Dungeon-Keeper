@@ -29,17 +29,8 @@ var DungeonFactory = (function(){
 			this.units = [];
 			this.dist = init_distoT();
 		}
-		getRoom(position) {
-			return this.rooms[position[0]][position[1]]
-		}
-		addUnit(unit, position) {
-			unit.room = position;
-			// when the room coordas are defined, change position to the entrance the unit came from
-			this.rooms[position[0]][position[1]].units.push(unit);
-			this.units.push(unit);
-		}
 	}
-  
+
 	var instance;
   
 	return {
@@ -176,10 +167,6 @@ function BuildDungeon()
 	
 	return DungeonRooms
 }
-
-
-
-
 export { BuildDungeon, DungeonRooms, DungeonFactory,update_dist,
 	WORLD_MIN_X, 
 	WORLD_MIN_Y,

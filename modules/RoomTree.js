@@ -1,12 +1,3 @@
-// import BuildDungeon from "./DungeonRoom.js";
-
-// const direction = 
-//     up: 0,
-//     down: 1,
-//     left: 2,
-//     right: 3
-// };
-
 const up = 0;
 const down = 1;
 const left = 2;

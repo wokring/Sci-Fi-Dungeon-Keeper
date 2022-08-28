@@ -1,6 +1,8 @@
 import { RoomTree, RoomNode } from "../modules/RoomTree.js"
 import {DungeonRoom} from "../modules/DungeonRoom.js"
 import {scene} from "../src/main.js";
+import {camera} from "../modules/gui.js";
+import {playSound} from "../modules/SoundPlayer.js";
 
 class Trap {
     constructor(uses, damage,x,y, room) {
@@ -22,6 +24,7 @@ class Trap {
         if (this.uses){
             unit.takeDamage(this.damage);
             unit.changeSprite();
+            playSound("../sfx/TrapHit.wav");
             this.uses -= 1;
         }
         if (this.uses <= 0) {
@@ -38,23 +41,7 @@ class TeleporterTrap extends Trap {
         this.tree = tree;
         this.curNode = curNode;
     }
-    // doHit(unit) {
-    //     if (this.uses === 0) {
-    //         // do nothing
-    //     } else {
-    //         let hero = this.curNode.data.dungeonRoom.unit.filter(
-    //             u => typeof(u.dodge) !== "undefined" && u.dodge !== null
-    //         )[0];
-    //         this.curNode.data.dungeonRoom.unit = this.curNode.data.dungeonRoom.unit.filter(
-    //             u => typeof(u.dodge) == "undefined" || u.dodge == null
-    //         );
-    //         let randomNode = this.tree.getRandomNode();
-    //         hero.room =  randomNode;
-    //         randomNode.data.dungeonRoom.unit.push(hero);
-    //         //access singleton roomtree here and get a random room in the range, then move the unit to that room
-    //         this.uses -= 1
-    //     }
-    // }
+    //Teleportation to do
 }
 
 export {Trap, TeleporterTrap}
