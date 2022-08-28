@@ -142,6 +142,14 @@ function onDocumentMouseDown( event ) {
                 case 1:
                         buildSuccess = UIBuildRoom(buildType, new THREE.Vector2(x,y)); 
                     break;
+                case 3:
+                    var room = DungeonRooms[x][y];
+                    if (room.isBuilt && room.trap == null){
+                        room.trap = new Spawner(room, [(scene, room)], 40, 4,x -3 ,y -3);
+                        scene.add(room.trap.sprite)
+                        buildSuccess = true;
+                    }
+                    break;
                 case 4:
                     if (DungeonRooms[x][y].isBuilt && DungeonRooms[x][y].trap == null){
                         DungeonRooms[x][y].trap = new Trap(10,5,x -3 ,y -3);
@@ -230,13 +238,11 @@ function onDocumentKeyDown(event) {
             Build = true;
             buildType = 4;
             break;
-        /*
         case "e":
             ghostPlane.position.z = GHOST_BUILD_Z;
             Build = true;
             buildType = 3;
             break;
-            */
         default:
             break;
     }
