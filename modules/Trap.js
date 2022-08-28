@@ -20,7 +20,7 @@ class Trap {
     }
     doHit(unit) {
         if (this.uses){
-            unit.health -= this.damage;
+            unit.takeDamage(this.damage);
             unit.changeSprite();
             this.uses -= 1;
         }
