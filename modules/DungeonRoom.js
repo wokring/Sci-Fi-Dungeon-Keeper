@@ -140,7 +140,7 @@ class DungeonRoom
 	add_ally(s,t,x,y) {
 		for(var i =0; i < 4; i++) {
 			if (this.ally[i] == null){
-				this.ally[i] = new Ally(s,t,x,y);
+				this.ally[i] = new Ally(s,t,x,y,i);
 				return true;
 			}
 		}
@@ -181,14 +181,14 @@ class DungeonRoom
 			if (this.ally[i] != null){
 				mob.health -= this.ally[i].attack;
 				this.ally[i].health -= mob.attack;
+				if(this.ally[i].health <= 0){
+					this.ally[i].destroy();
+					this.ally[i] = null
+				}
 				if(mob.health <= 0){
 					mob.dungeonRoom = null;
 					mob.destroy();
 					return;
-				}
-				if(this.ally[i].health <= 0){
-					this.ally[i].destroy();
-					this.ally[i] = null
 				}
 				in_compat = 3
 			}

@@ -3,13 +3,14 @@ const HEALTH = [15,10,50];
 const TEX = ["../sprites/romba.png","../sprites/drone.png","../sprites/blow.png"];
 
 class Ally{
-    constructor(scene,type,x,y) {
+    constructor(scene,type,x,y,i) {
         this.attack = ATTACK[type];
         this.health = HEALTH[type];
         this.scene = scene;
         this.plane = null;
         this.makeSprite(x,y,TEX[type])
         scene.add(this.plane)
+        console.log(this.health);
     }
 
     makeSprite(x,y,path) {
