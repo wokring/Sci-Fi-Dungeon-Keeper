@@ -21,7 +21,7 @@ var mx = 0;
 var my = 0;
 
 const CAMERA_HIDDEN_Z = 100;
-const GHOST_BUILD_Z = 3;
+const GHOST_BUILD_Z = 4;
 const frustumSize = 10;
 
 var power = 1000;
