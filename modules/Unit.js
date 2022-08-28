@@ -12,15 +12,17 @@ const UNIT_Z = 3;
 const MOBSTATE_NONE = 0
 const MOBSTATE_TREASUREHUNTING = 1;
 const MOBSTATE_ESCAPE = 2;
+const MOBSTATE_COMPAT = 3;
 
 var hit_audio = new Audio('../sfx/AllyHit.wav');
 var kill_audio = new Audio('../sfx/EnemyDie.wav')
 class Unit {
 	static nextId = 1;
-	constructor(scene, startDungeonRoom)
+	constructor(scene, startDungeonRoom, attack = 5, health =10)
 	{
 		this.id = Unit.nextId++;
 		this.health = 5;
+        this.attack = attack;
 		this.makeSprite()
 		this.scene = scene;
 		scene.add(this.plane)
@@ -119,6 +121,10 @@ class Unit {
 					}
 				}
 			}
+            break;
+            case MOBSTATE_COMPAT:
+                this.changeSprite();
+                this.mobState = this.dungeonRoom.combat(this);
 		}
 	}
 	/*getCurrentMoveTarget()
