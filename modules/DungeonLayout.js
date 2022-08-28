@@ -11,7 +11,6 @@ const treasurex = 4
 const treasurey = 4
 var DungeonRooms = [];
 var dist = [];
-=======
 
 const DUNGEON_HEIGHT = 8;
 const DUNGEON_WIDTH = 8;
@@ -19,6 +18,9 @@ const WORLD_MIN_X = -3;
 const WORLD_MIN_Y = -3;
 const WORLD_MAX_X = 4;
 const WORLD_MAX_Y = 4;
+
+const DOODAD_Z = 2;
+
 var DungeonFactory = (function(){
 	class Dungeon {
 		constructor() {
@@ -64,6 +66,7 @@ function init_distoT(){
 	dist[treasurex][treasurey] = 0;
 	dist[4][3] = 1;
 	dist[3][3] = 2;
+	//console.log(dist)
 	return dist;
 }
 
@@ -84,7 +87,8 @@ function update_dist_room (x,y){
 			if (ny >= 0 && ny < DUNGEON_HEIGHT){
 				var room = DungeonRooms[nx][ny]
 				if(room.isBuilt && d < dist[nx][ny]){
-					dist[nx][ny] = d +1;
+					dist[nx][ny] = d + 1;
+					room.dist_to_treasure = d + 1;
 					update_dist_room(nx,ny);
 				}
 			}
@@ -113,16 +117,17 @@ function BuildDungeon()
 	DungeonRooms[treasurex][treasurey].CreateMapTiles();
 	const plane = new THREE.PlaneGeometry(0.75, 0.75);
 	const PS_tex = new THREE.TextureLoader().load( '../sprites/power_source.png' );
-    PS_tex.magFilter = THREE.NearestFilter
-    const PS_mt= new THREE.MeshBasicMaterial({ map: PS_tex });
-    PS_mt.transparent = true;
-    const power_source = new THREE.Mesh(plane, PS_mt);
-    power_source.position.x = treasurex + WORLD_MIN_X;
-    power_source.position.z = 3;
-    power_source.position.y = treasurey + WORLD_MIN_Y;
+	PS_tex.magFilter = THREE.NearestFilter
+	const PS_mt= new THREE.MeshBasicMaterial({ map: PS_tex });
+	PS_mt.transparent = true;
+	const power_source = new THREE.Mesh(plane, PS_mt);
+	power_source.position.x = treasurex + WORLD_MIN_X;
+	power_source.position.z = DOODAD_Z;
+	power_source.position.y = treasurey + WORLD_MIN_Y;
 	scene.add(power_source);
 	DungeonRooms[4][3].CreateMapTiles();
 	DungeonRooms[3][3].CreateMapTiles();
+	
 	// for(var j=0; j<DUNGEON_HEIGHT; j++)
 	// {
 	// 	const curRoom = DungeonRooms[i][j];
@@ -139,12 +144,19 @@ function BuildDungeon()
 	// 	curRoom.CreateMapTiles();
 	// }
 	PathHelper.treasureRoom = DungeonRooms[treasurex][treasurey];
+	PathHelper.treasureRoom.dist_to_treasure = 0;
 	PathHelper.entranceRoom = DungeonRooms[3][3];
+	
+	//setup the path weightings
+	update_dist();
+	//console.log(dist);
+	
+	/*
 	var myRoom = DungeonRooms[3][3];
 	const template = [10,10,10,1,1,1,null,[0,1],[-1,3]]
 	var mySpawner = new Spawner(myRoom, template, 2, 5);
 	var manager = new SpawnManager();
-	manager.addSpawn(mySpawner);
+	manager.addSpawn(mySpawner);*/
 
 
 	return DungeonRooms

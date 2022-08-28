@@ -21,7 +21,7 @@ var mx = 0;
 var my = 0;
 
 const CAMERA_HIDDEN_Z = 100;
-const GHOST_BUILD_Z = 3;
+const GHOST_BUILD_Z = 4;
 const frustumSize = 10;
 
 var power = 1000;
@@ -143,28 +143,38 @@ function onDocumentMouseDown( event ) {
             var x = mx-WORLD_MIN_X;
             var y = my-WORLD_MIN_Y;
             var buildSuccess = false;
-            switch(buildType){
-                case 1:
-                        buildSuccess = UIBuildRoom(buildType, new THREE.Vector2(x,y)); 
-                    break;
-                case 3:
-                    var room = DungeonRooms[x][y];
-                    if (room.isBuilt && room.trap == null){
-                        room.trap = new Spawner(room, [(scene, room)], 40, 4,x -3 ,y -3);
-                        scene.add(room.trap.sprite)
-                        buildSuccess = true;
-                    }
-                    break;
-                case 4:
-                    if (DungeonRooms[x][y].isBuilt && DungeonRooms[x][y].trap == null){
+		switch(buildType)
+		{
+			case 1:
+				buildSuccess = UIBuildRoom(buildType, new THREE.Vector2(x,y)); 
+				break;
+			case 3:
+				var room = DungeonRooms[x][y];
+				if (room.isBuilt && room.trap == null){
+				room.trap = new Spawner(room, [(scene, room)], 40, 4,x -3 ,y -3);
+				scene.add(room.trap.sprite)
+				buildSuccess = true;
+				}
+				break;
+			case 4:
+				var room = DungeonRooms[x][y];
+				if(!room.isBuilt)
+				{
+					console.log("Notice: Cannot build trap there, the room there is not built.");
+					break;
+				}
+				if (room.trap != null)
+				{
+					console.log("Notice: Cannot build trap there, already another trap present");
+					break;
+				}
+				
+				room.trap = new Trap(1,2,x -3 ,y -3, room);
+				scene.add(room.trap.sprite)
+				buildSuccess = true;
+				break;
 
-                        DungeonRooms[x][y].trap = new Trap(1,2,x -3 ,y -3);
-                        scene.add(DungeonRooms[x][y].trap.sprite)
-                        buildSuccess = true;
-                    }
-                    break;
-
-            }
+		}
             if(buildSuccess)
             {
                 power -= ROOM_COSTP[buildType];

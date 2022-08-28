@@ -3,7 +3,7 @@ import {DungeonRoom} from "../modules/DungeonRoom.js"
 import {scene} from "../src/main.js";
 
 class Trap {
-    constructor(uses, damage,x,y) {
+    constructor(uses, damage,x,y, room) {
         this.uses = uses;
         this.damage = damage;
         const mines_tex = new THREE.TextureLoader().load( '../sprites/mines.png' );
@@ -16,6 +16,7 @@ class Trap {
         mines.position.y = y;
         mines.position.z = 0;
         this.sprite = mines;
+        this.room = room;
     }
     doHit(unit) {
         if (this.uses){
@@ -25,6 +26,7 @@ class Trap {
         }
         if (this.uses <= 0) {
             scene.remove(this.sprite);
+            this.room.trap = null;
         }
     }
 }
