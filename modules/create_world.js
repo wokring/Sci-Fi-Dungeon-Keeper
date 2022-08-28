@@ -1,6 +1,7 @@
 
 import { MapTile } from "../modules/MapTile.js"
-import { BuildDungeon } from "../modules/DungeonLayout.js"
+import { BuildDungeon, DungeonRooms } from "../modules/DungeonLayout.js"
+
 
 const NORTH = 1;
 const SOUTH = 2;

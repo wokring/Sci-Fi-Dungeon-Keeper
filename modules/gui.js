@@ -9,6 +9,7 @@ import { RoomTree, RoomNode } from "../modules/RoomTree.js"
 import {DungeonRooms} from "../modules/DungeonLayout.js"
 import { MapTile } from "../modules/MapTile.js"
 import { UIBuildRoom } from "../modules/UIBuildRoom.js"
+import { Ally } from "./Ally.js";
 
 const ROOM_COSTP = [1000,5,3,4,1,2,3,4,5,100]
 //const ROOM_COSTC = [1000,10,3,4,3,2,3,4,5,50]
@@ -53,6 +54,7 @@ function update_text(new_text, old_text, texture){
 }
 
 function init_gui(){
+    DungeonRooms[4][3].add_ally(scene,2,4,3);
 
     aspect = window.innerWidth / window.innerHeight;
         
@@ -168,15 +170,58 @@ function onDocumentMouseDown( event ) {
 					console.log("Notice: Cannot build trap there, already another trap present");
 					break;
 				}
-				
-				room.trap = new Trap(1,2,x -3 ,y -3, room);
+                room.trap = new Trap(1,2,x -3 ,y -3, room);
 				scene.add(room.trap.sprite)
+				buildSuccess = true;
+                playSound("../sfx/BuildTrap.wav");
+                break;
+            case 5:
+                var room = DungeonRooms[x][y];
+                if(!room.isBuilt)
+                {
+                    console.log("Notice: Cannot build trap there, the room there is not built.");
+                    break;
+                }
+                if (!room.add_ally(scene,1,x,y))
+                {
+                    console.log("Notice: nor room");
+                    break;
+                }
+                buildSuccess = true;
+                break;
+            case 6:
+                var room = DungeonRooms[x][y];
+                if(!room.isBuilt)
+                {
+                    console.log("Notice: Cannot build trap there, the room there is not built.");
+                    break;
+                }
+                if (!room.add_ally(scene,0,x,y))
+                {
+                    console.log("Notice: nor room");
+                    break;
+                }
+                buildSuccess = true;
+                break;
+            case 9:
+                var room = DungeonRooms[x][y];
+                if(!room.isBuilt)
+                {
+                    console.log("Notice: Cannot build trap there, the room there is not built.");
+                    break;
+                }
+                if (!room.add_ally(scene,2,x,y))
+                {
+                    console.log("Notice: nor room");
+                    break;
+                }
 				buildSuccess = true;
 				break;
 
 		}
             if(buildSuccess)
             {
+                console.log(buildType);
                 power -= ROOM_COSTP[buildType];
                 circuit -= ROOM_COSTC[buildType];
             }
@@ -258,6 +303,21 @@ function onDocumentKeyDown(event) {
             ghostPlane.position.z = GHOST_BUILD_Z;
             Build = true;
             buildType = 3;
+            break;
+        case "f":
+            ghostPlane.position.z = GHOST_BUILD_Z;
+            Build = true;
+            buildType = 9;
+            break;
+        case "k":
+            ghostPlane.position.z = GHOST_BUILD_Z;
+            Build = true;
+            buildType = 5;
+            break;
+        case "i":
+            ghostPlane.position.z = GHOST_BUILD_Z;
+            Build = true;
+            buildType = 6;
             break;
         default:
             break;
