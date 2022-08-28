@@ -26,13 +26,21 @@ class DungeonRoom
 		this.trap = null;
 		this.spawn = [];
 		this.texture = [];
+		this.sprite = null;
 		this.dist_to_treasure = 99999;
 	}
 	CreateMapTiles()
 	{
 		//play sfx for build success
 		this.isBuilt = true;
-		const room_tex = new THREE.TextureLoader().load( '../sprites/room.png' );
+
+		let room_tex = new THREE.TextureLoader().load( '../sprites/room.png' );
+		if (this.myDungeonIndex.x == 3 && this.myDungeonIndex.y == 3) {
+			room_tex = new THREE.TextureLoader().load( '../sprites/spawn_room.png' );
+		} else if (this.myDungeonIndex.x == 4 && this.myDungeonIndex.y == 4) {
+			room_tex = new THREE.TextureLoader().load( '../sprites/trophy_room.png' );
+		}
+		
 		room_tex.magFilter = THREE.NearestFilter
         const room_mt= new THREE.MeshBasicMaterial({ map: room_tex });
         room_mt.transparent = true;
