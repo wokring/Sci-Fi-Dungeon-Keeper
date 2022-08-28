@@ -26,8 +26,8 @@ const CAMERA_HIDDEN_Z = 100;
 const GHOST_BUILD_Z = 4;
 const frustumSize = 10;
 
-var power = 1000;
-var circuit = '';
+var power = 100;
+var circuit = 20;
 
 // var ROOM_COSTP = 10
 // var ROOM_COSTC = 2
@@ -328,9 +328,16 @@ function onDocumentKeyDown(event) {
     }
 }
 
-function change_Power(value) {
-    power += value;
-    update_text(power.toString(),PT_ctx,PT_t);
+function modifyPower(powermod)
+{
+	power += powermod
+	update_text(power.toString(),PT_ctx,PT_t);
 }
+function modifyCircuits(circuitmod)
+{
+	power += circuitmod
+        update_text(circuit.toString(),CP_ctx,CP_t);
+}
+//update_text(circuit.toString(),CP_ctx,CP_t);
 
-export {init_gui,camera,aspect,frustumSize,change_Power};
+export {init_gui,camera,aspect,frustumSize,modifyPower,modifyCircuits};

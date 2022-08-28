@@ -7,8 +7,8 @@ import {Trap} from "../modules/Trap.js";
 
 
 
-const treasurex = 4
-const treasurey = 4
+const treasureIndexX = 4
+const treasureIndexY = 7
 var DungeonRooms = [];
 var dist = [];
 
@@ -54,15 +54,16 @@ function init_distoT(){
 			dist[i][j] = 9999;
 		}
 	}
-	dist[treasurex][treasurey] = 0;
-	dist[4][3] = 1;
-	dist[3][3] = 2;
+	dist[treasureIndexX][treasureIndexY] = 0;
+	//dist[4][3] = 1;
+	//dist[3][3] = 2;
+	//console.log(dist)
 	return dist;
 }
 
 
 function update_dist (){
-	update_dist_room(treasurex,treasurey);
+	update_dist_room(treasureIndexX,treasureIndexY);
 
 }
 
@@ -89,7 +90,6 @@ function update_dist_room (x,y){
 
 function BuildDungeon()
 {	
-	init_distoT();
 	for(var i=0; i<DUNGEON_WIDTH; i++)
 	{
 		DungeonRooms.push(new Array());
@@ -101,33 +101,70 @@ function BuildDungeon()
 		}
 	}
 	
+	init_distoT();
+	//console.log(dist);
+	
 	//setup the starting rooms
-	var i = Math.ceil(DUNGEON_WIDTH/2);
-
-	DungeonRooms[treasurex][treasurey].CreateMapTiles();
-	const plane = new THREE.PlaneGeometry(0.75, 0.75);
-	const PS_tex = new THREE.TextureLoader().load( '../sprites/power_source.png' );
+	var i = Math.floor(DUNGEON_WIDTH/2);
+	for(var j=0; j<DUNGEON_HEIGHT; j++)
+	{
+		const curRoom = DungeonRooms[i][j];
+	 	if(j == 0)
+	 	{
+	 		//our entrance room for enemies
+	 		PathHelper.entranceRoom = curRoom;
+	 	}
+	 	else if(j == DUNGEON_HEIGHT - 1)
+	 	{
+	 		//our treasure room
+	 		PathHelper.treasureRoom = curRoom;
+	 		PathHelper.treasureRoom.dist_to_treasure = 0;
+	 	}
+	 	curRoom.CreateMapTiles();
+	}
+	//DungeonRooms[treasureIndexX][treasureIndexY].CreateMapTiles();
+	//DungeonRooms[4][3].CreateMapTiles();
+	//DungeonRooms[3][3].CreateMapTiles();
+	
+	//PathHelper.treasureRoom = DungeonRooms[treasureIndexX][treasureIndexY];
+	//PathHelper.treasureRoom.dist_to_treasure = 0;
+	//PathHelper.entranceRoom = DungeonRooms[3][3];
+	
+	//visual sprite for the treasure room
+	var plane = new THREE.PlaneGeometry(0.75, 0.75);
+	var PS_tex = new THREE.TextureLoader().load( '../sprites/power_source.png' );
 	PS_tex.magFilter = THREE.NearestFilter
-	const PS_mt= new THREE.MeshBasicMaterial({ map: PS_tex });
+	var PS_mt= new THREE.MeshBasicMaterial({ map: PS_tex });
 	PS_mt.transparent = true;
-	const power_source = new THREE.Mesh(plane, PS_mt);
-	power_source.position.x = treasurex + WORLD_MIN_X;
+	var power_source = new THREE.Mesh(plane, PS_mt);
+	power_source.position.x = treasureIndexX + WORLD_MIN_X;
 	power_source.position.z = DOODAD_Z;
-	power_source.position.y = treasurey + WORLD_MIN_Y;
+	power_source.position.y = treasureIndexY + WORLD_MIN_Y;
 	scene.add(power_source);
-
-	DungeonRooms[4][3].CreateMapTiles();
-	DungeonRooms[3][3].CreateMapTiles();
-	DungeonRooms[2][3].CreateMapTiles();
-	DungeonRooms[1][3].CreateMapTiles();
-	DungeonRooms[0][3].CreateMapTiles();
-
-	PathHelper.treasureRoom = DungeonRooms[treasurex][treasurey];
-	PathHelper.treasureRoom.dist_to_treasure = 0;
-	PathHelper.entranceRoom = DungeonRooms[0][3];
+	
+	//visual sprite for the entrance room
+	plane = new THREE.PlaneGeometry(1, 1);
+	PS_tex = new THREE.TextureLoader().load( '../sprites/entrance.png' );
+	PS_tex.magFilter = THREE.NearestFilter
+	PS_mt= new THREE.MeshBasicMaterial({ map: PS_tex });
+	PS_mt.transparent = true;
+	var entrancemarker = new THREE.Mesh(plane, PS_mt);
+	entrancemarker.position.x = treasureIndexX + WORLD_MIN_X;
+	entrancemarker.position.z = DOODAD_Z;
+	entrancemarker.position.y = WORLD_MIN_X;
+	scene.add(entrancemarker);
 	
 	//setup the path weightings
 	update_dist();
+	//console.log(dist);
+	
+	/*
+	var myRoom = DungeonRooms[3][3];
+	const template = [10,10,10,1,1,1,null,[0,1],[-1,3]]
+	var mySpawner = new Spawner(myRoom, template, 2, 5);
+	var manager = new SpawnManager();
+	manager.addSpawn(mySpawner);*/
+	
 	return DungeonRooms
 }
 export { BuildDungeon, DungeonRooms, DungeonFactory,update_dist,

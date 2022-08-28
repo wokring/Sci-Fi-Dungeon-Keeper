@@ -5,6 +5,7 @@ import {WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y} from "../modules/Dungeo
 import {change_Power, camera} from "../modules/gui.js";
 import {playSound} from "../modules/SoundPlayer.js";
 
+
 const UNIT_SPRITE_WIDTH = 0.2;
 const UNIT_SPRITE_HEIGHT = 0.2;
 const UNIT_Z = 3;
@@ -14,8 +15,12 @@ const MOBSTATE_TREASUREHUNTING = 1;
 const MOBSTATE_ESCAPE = 2;
 const MOBSTATE_COMPAT = 3;
 
-var hit_audio = new Audio('../sfx/AllyHit.wav');
-var kill_audio = new Audio('../sfx/EnemyDie.wav')
+const WANDER_CHANCE = 0.33;
+
+var hit_audio = new Audio('../sfx/EnemyHit.wav');
+var kill_audio = new Audio('../sfx/EnemyDie.wav');
+var escape_audio = new Audio('../sfx/EnemyGetAwayWithPower.wav');
+
 class Unit {
 	static nextId = 1;
 	constructor(scene, startDungeonRoom, attack = 5, health =10)
@@ -34,12 +39,14 @@ class Unit {
 		startDungeonRoom.onMobEnter(this);
 		this.currentMoveTarget = null;
 		this.maxSpeed = 1;
+		this.isEnemy = true;
 	}
 	PathToTreasure()
 	{
 		this.mobState = MOBSTATE_TREASUREHUNTING;
 		//this.currentPath = PathHelper.GetPathToTreasure(this.dungeonRoom);
 		//this.nextPathTarget = this.currentPath[0];
+		//console.log("treasurehunting");
 			
 	}
 	PathToEntrance()
@@ -63,7 +70,14 @@ class Unit {
 				if(this.currentMoveTarget == null)
 				{
 					//get the updated move target
-					this.currentMoveTarget = this.dungeonRoom.getTreasureMoveTarget();
+					if(Math.random() > WANDER_CHANCE)
+					{					
+						this.currentMoveTarget = this.dungeonRoom.getTreasureMoveTarget();
+					}
+					else
+					{
+						this.currentMoveTarget = this.dungeonRoom.getWanderMoveTarget();
+					}
 					
 					//if we still cant get a move target, then stop pathing
 					if(this.currentMoveTarget == null)
@@ -99,10 +113,23 @@ class Unit {
 				//handle pathing
 				if(sqrDist <= 0.01)
 				{
+					if(this.dungeonRoom.dist_to_treasure == 0)
+					{
+						//console.log("reached treasure");
+						this.mobState = MOBSTATE_ESCAPE;
+					}
+					
 					//this.invalidateCurrentMoveTarget();
 					if(this.dungeonRoom != null)
 					{
-						this.currentMoveTarget = this.dungeonRoom.getTreasureMoveTarget();
+						if(Math.random() > WANDER_CHANCE)
+						{					
+							this.currentMoveTarget = this.dungeonRoom.getTreasureMoveTarget();
+						}
+						else
+						{
+							this.currentMoveTarget = this.dungeonRoom.getWanderMoveTarget();
+						}
 					}
 					
 					//have we got more path nodes to get to?
