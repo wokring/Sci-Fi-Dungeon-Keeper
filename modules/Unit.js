@@ -225,6 +225,12 @@ class Unit {
 		{
 			this.destroy();
 		}
+		else
+		{
+			kill_audio.play();
+			this.destroy();
+		}
+
 	}
 	changeSprite() {
 		this.plane.material.color.setHex( 0xff0000 );
