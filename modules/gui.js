@@ -181,7 +181,7 @@ function onDocumentMouseDown( event ) {
                 playSound("../sfx/BuildTrap.wav");
                 break;
             case 5:
-                var room = DungeonRooms[x][y];
+                room = DungeonRooms[x][y];
                 if(!room.isBuilt)
                 {
                     console.log("Notice: Cannot build trap there, the room there is not built.");
@@ -195,7 +195,7 @@ function onDocumentMouseDown( event ) {
                 buildSuccess = true;
                 break;
             case 6:
-                var room = DungeonRooms[x][y];
+                room = DungeonRooms[x][y];
                 if(!room.isBuilt)
                 {
                     console.log("Notice: Cannot build trap there, the room there is not built.");
@@ -209,7 +209,7 @@ function onDocumentMouseDown( event ) {
                 buildSuccess = true;
                 break;
             case 9:
-                var room = DungeonRooms[x][y];
+                room = DungeonRooms[x][y];
                 if(!room.isBuilt)
                 {
                     console.log("Notice: Cannot build trap there, the room there is not built.");
