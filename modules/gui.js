@@ -27,7 +27,7 @@ const GHOST_BUILD_Z = 4;
 const frustumSize = 10;
 
 var power = 1000;
-var circuit = 200;
+var circuit = '';
 
 // var ROOM_COSTP = 10
 // var ROOM_COSTC = 2
@@ -93,14 +93,14 @@ function init_gui(){
     PT_tp.position.y += 3.1;
 
     const icon = new THREE.PlaneGeometry(0.5, 0.5);
-    const CB_tex = new THREE.TextureLoader().load( '../sprites/circuit_board.png' );
-    CB_tex.magFilter = THREE.NearestFilter
-    const CB_mt = new THREE.MeshBasicMaterial({ map: CB_tex });
-    CB_mt.transparent = true;
-    const circuit_board = new THREE.Mesh(icon, CB_mt);
-    circuit_board.position.x = -5;
-    circuit_board.position.y = 2.5;
-    circuit_board.position.z= 3;
+    // const CB_tex = new THREE.TextureLoader().load( '../sprites/circuit_board.png' );
+    // CB_tex.magFilter = THREE.NearestFilter
+    // const CB_mt = new THREE.MeshBasicMaterial({ map: CB_tex });
+    // CB_mt.transparent = true;
+    // const circuit_board = new THREE.Mesh(icon, CB_mt);
+    // circuit_board.position.x = -5;
+    // circuit_board.position.y = 2.5;
+    // circuit_board.position.z= 3;
 
     const PT_tex = new THREE.TextureLoader().load( '../sprites/power_thing.png' );
     PT_tex.magFilter = THREE.NearestFilter
@@ -112,11 +112,11 @@ function init_gui(){
     power_thing.position.y = 3;
     
     update_text(power.toString(),PT_ctx,PT_t);
-    update_text(circuit.toString(),CP_ctx,CP_t);
+    // update_text(circuit.toString(),CP_ctx,CP_t);
 	
     scene.add(power_thing);
     scene.add(PT_tp);
-    scene.add(circuit_board);
+    // scene.add(circuit_board);
     scene.add(CP_tp);
     scene.add(bar);
    
@@ -125,8 +125,8 @@ function init_gui(){
     gui[1] = bar;
     gui[2] = power_thing;
     gui[3] = PT_tp;
-    gui[4] = circuit_board;
-    gui[5] = CP_tp;
+    // gui[4] = circuit_board;
+    // gui[5] = CP_tp;
 
 
     document.body.appendChild(renderer.domElement);
@@ -139,7 +139,7 @@ function init_gui(){
 function onDocumentMouseDown( event ) {
 	mouse_down = true;    
 
-	if(Build == true)
+	if(Build === true)
 	{
 
         if (power >= ROOM_COSTP[buildType] && circuit >= ROOM_COSTC[buildType] && buildType > 0){
@@ -147,7 +147,7 @@ function onDocumentMouseDown( event ) {
             var x = mx-WORLD_MIN_X;
             var y = my-WORLD_MIN_Y;
             var buildSuccess = false;
-
+            let room;
 		switch(buildType)
 		{
 			case 1:
@@ -155,7 +155,7 @@ function onDocumentMouseDown( event ) {
                 playSound("../sfx/BuildRoom.wav");
 				break;
 			case 3:
-				var room = DungeonRooms[x][y];
+				room = DungeonRooms[x][y];
 				if (room.isBuilt && room.trap == null){
 				room.trap = new Spawner(room, [(scene, room)], 40, 4,x -3 ,y -3);
 				scene.add(room.trap.sprite)
@@ -164,7 +164,7 @@ function onDocumentMouseDown( event ) {
                 playSound("../sfx/BuildTrap.wav");
 				break;
 			case 4:
-				var room = DungeonRooms[x][y];
+				room = DungeonRooms[x][y];
 				if(!room.isBuilt)
 				{
 					console.log("Notice: Cannot build trap there, the room there is not built.");
@@ -228,7 +228,7 @@ function onDocumentMouseDown( event ) {
             {
                 console.log(buildType);
                 power -= ROOM_COSTP[buildType];
-                circuit -= ROOM_COSTC[buildType];
+                // circuit -= ROOM_COSTC[buildType];
             }
         }
         //exit room construction mode
@@ -236,7 +236,7 @@ function onDocumentMouseDown( event ) {
         Build = false
         ghostPlane.position.z = CAMERA_HIDDEN_Z;
         update_text(power.toString(),PT_ctx,PT_t);
-        update_text(circuit.toString(),CP_ctx,CP_t);
+        // update_text(circuit.toString(),CP_ctx,CP_t);
         
 	}
     
@@ -279,10 +279,9 @@ function onDocumentMouseMove(event) {
 	}
 	
 	//update the position of the construction ghost
-	if (Build == true){
+	if (Build === true){
 		ghostPlane.position.x = mx;
 		ghostPlane.position.y = my;
-		//console.log("animate() ghost:" + ghost.position.x + "," + ghost.position.x);
 	}
 }
 
@@ -329,4 +328,9 @@ function onDocumentKeyDown(event) {
     }
 }
 
-export {init_gui,camera,aspect,frustumSize};
+function change_Power(value) {
+    power += value;
+    update_text(power.toString(),PT_ctx,PT_t);
+}
+
+export {init_gui,camera,aspect,frustumSize,change_Power};

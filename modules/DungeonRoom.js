@@ -2,6 +2,7 @@ import {MapTile} from "./MapTile.js"
 import {WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y,DungeonRooms} from "../modules/DungeonLayout.js"
 import { scene } from "../src/main.js";
 import { Ally } from "./Ally.js";
+import { change_Power } from "./gui.js";
 
 const NORTH = 1;
 const SOUTH = 2;
@@ -36,9 +37,9 @@ class DungeonRoom
 		this.isBuilt = true;
 
 		let room_tex = new THREE.TextureLoader().load( '../sprites/room.png' );
-		if (this.myDungeonIndex.x == 3 && this.myDungeonIndex.y == 3) {
+		if (this.myDungeonIndex.x == 0 && this.myDungeonIndex.y == 3) {
 			room_tex = new THREE.TextureLoader().load( '../sprites/spawn_room.png' );
-		} else if (this.myDungeonIndex.x == 4 && this.myDungeonIndex.y == 4) {
+		} else if (this.myDungeonIndex.x === 4 && this.myDungeonIndex.y === 4) {
 			room_tex = new THREE.TextureLoader().load( '../sprites/trophy_room.png' );
 		}
 		
@@ -52,56 +53,17 @@ class DungeonRoom
         room.position.z = -1;
         this.sprite = room;
 		scene.add(this.sprite);
-		// new MapTile(SOUTH|WEST,new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
-		// new MapTile(WEST, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 1), FLOOR_C);
-		// new MapTile(WEST, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 3), FLOOR_D);
-		
-		// new MapTile(NORTH|WEST,new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 0, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
-		// new MapTile(NORTH,	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 1, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
-		// new MapTile(NORTH, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 3, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
-		
-		// new MapTile(NORTH|EAST,new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 4));
-		// new MapTile(EAST, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 3), FLOOR_A);
-		// new MapTile(EAST, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 1), FLOOR_B);
-		
-		// new MapTile(SOUTH|EAST,new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 4, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
-		// new MapTile(SOUTH, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 3, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
-		// new MapTile(SOUTH, 	new THREE.Vector2(
-		// 	this.myWorldCoords.x + MapTile.worldTileDefaults.x * 1, 
-		// 	this.myWorldCoords.y + MapTile.worldTileDefaults.y * 0));
 	}
 	getTreasureMoveTarget()
 	{
 		//are we the treasure room?
-		if(this.dist_to_treasure == 0)
+		if(this.dist_to_treasure === 0)
 		{
 			return
 		}
 		//grab the adjacent rooms
 		var adjRooms = this.getAdjacentRooms();
-		if(adjRooms.length == 0)
+		if(adjRooms.length === 0)
 		{
 			//todo: error checking
 			return;
@@ -124,12 +86,6 @@ class DungeonRoom
 			}
 		}
 		return closeRoom.myWorldCoords;
-	}
-	getEntranceMoveTarget()
-	{
-	}
-	getWanderMoveTarget()
-	{
 	}
 	getCentre()
 	{
@@ -206,13 +162,18 @@ class DungeonRoom
 				mob.dungeonRoom = this;
 			}
 
+		} 
+		else if (mob.dungeonRoom.myDungeonIndex.x == 4 && mob.dungeonRoom.myDungeonIndex.y == 4) {
+			change_Power(-10);
 		}
+
 		for(var i =0; i < 4; i++) {
 			if (this.ally[i] != null){
 				mob.mobState = 3;
 			}
 		}
 		//console.log("maptile #" + this.id + " entered by mob #" + mob.id);
+
 	}
 	combat(mob) {
 		var in_compat = 1;
@@ -240,7 +201,6 @@ class DungeonRoom
 		{
 			this.units_present.splice(this.units_present.indexOf(mob),1);
 			mob.dungeonRoom = null;
-			//console.log("maptile #" + this.id + " exited by mob #" + mob.id);
 		}
 	}
 }
