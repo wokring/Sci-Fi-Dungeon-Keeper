@@ -3,11 +3,13 @@ import {PathHelper} from './PathHelper.js'
 
 const MOBSTATE_UNKNOWN = 0
 const MOBSTATE_PATHING = 1;
-
+var hit_audio = new Audio('../sfx/AllyHit.wav');
+var kill_audio = new Audio('../sfx/EnemyDie.wav')
 class Unit {
 	static nextId = 1;
 	constructor(scene, startDungeonRoom)
 	{
+
 		this.id = Unit.nextId++;
 		this.makeSprite()
 		scene.add(this.plane)
@@ -147,8 +149,10 @@ class Unit {
     */
     getHit(damage, debuff = [1, 1]) {
         if (this.damage - damage <= 0) {
-            mobManager.killUnit(this)
+            kill_audio.play();
+            mobManager.killUnit(this);
         } else {
+            hit_audio.play();
             this.damage -= damage;
         }
         this.debuff = debuff;

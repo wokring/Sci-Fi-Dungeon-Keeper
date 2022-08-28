@@ -2,7 +2,7 @@ import {DungeonRooms, update_dist} from "./DungeonLayout.js"
 import {DungeonRoom} from "./DungeonRoom.js"
 import {MapTile} from "./MapTile.js"
 import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
-
+var built_audio = new Audio('../sfx/BuildRoom.wav')
 function UIBuildRoom(buildType, quantizedWorldCoords)
 {
 	//array safety checks
@@ -42,6 +42,7 @@ function UIBuildRoom(buildType, quantizedWorldCoords)
 
 		return false;
 	}
+	built_audio.play();
 	chosenRoom.CreateMapTiles();
 
 	update_dist()
@@ -100,7 +101,6 @@ function CanBuild(tryRoom)
 		}
 	}
 
-	
 	//couldn't find an adjacent room so we can't build here
 	console.log("NOTICE: Could not find an adjacent room to connect to.");
 	return false;
