@@ -11,10 +11,13 @@ const MOBSTATE_NONE = 0
 const MOBSTATE_TREASUREHUNTING = 1;
 const MOBSTATE_ESCAPE = 2;
 
+var hit_audio = new Audio('../sfx/AllyHit.wav');
+var kill_audio = new Audio('../sfx/EnemyDie.wav')
 class Unit {
 	static nextId = 1;
 	constructor(scene, startDungeonRoom)
 	{
+
 		this.id = Unit.nextId++;
 		this.health = 5;
 		this.makeSprite()
@@ -181,8 +184,13 @@ class Unit {
 	takeDamage(damage)
 	{
 		this.health -= damage;
-		if(this.health <= 0)
+		if(this.health > 0)
 		{
+			hit_audio.play();
+		}
+		else
+		{
+			kill_audio.play();
 			this.destroy();
 		}
 	}

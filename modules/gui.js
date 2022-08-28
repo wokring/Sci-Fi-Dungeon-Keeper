@@ -63,6 +63,17 @@ function init_gui(){
     ghostPlane.position.z = CAMERA_HIDDEN_Z;
     scene.add(ghostPlane);
 
+    const listener = new THREE.AudioListener();
+    camera.add( listener );
+    const sound = new THREE.Audio( listener );
+
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load('../sfx/CombatMusic.mp3', function (buffer) {
+        sound.setBuffer( buffer );
+        sound.setLoop( true );
+        sound.setVolume( 0.2 )
+        sound.play();
+    })
 
     const bar_tex = new THREE.TextureLoader().load( '../sprites/bar.png' );
     bar_tex.magFilter = THREE.NearestFilter
