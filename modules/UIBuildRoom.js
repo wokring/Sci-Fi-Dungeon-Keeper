@@ -49,7 +49,7 @@ function UIBuildRoom(buildType, quantizedWorldCoords)
 	update_dist()
 	
 	//for testing
-	mobManager.createMobAt(chosenRoom).PathToTreasure();
+	//mobManager.createMobAt(chosenRoom).PathToTreasure();
 	
 	return true;
 
