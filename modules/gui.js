@@ -173,7 +173,7 @@ function onDocumentMouseDown( event ) {
 					console.log("Notice: Cannot build trap there, already another trap present");
 					break;
 				}
-				room.trap = new Trap(1,2,x -3 ,y -3, room);
+				room.trap = new Trap(3,3,x -3 ,y -3, room);
 				scene.add(room.trap.sprite)
 				buildSuccess = true;
 				playSound("../sfx/BuildTrap.wav");

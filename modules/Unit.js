@@ -113,7 +113,7 @@ class Unit {
 				//handle pathing
 				if(sqrDist <= 0.01)
 				{
-					if(this.dungeonRoom.dist_to_treasure == 0)
+					if(this.dungeonRoom.dist_to_treasure === 0)
 					{
 						//console.log("reached treasure");
 						this.mobState = MOBSTATE_ESCAPE;
@@ -218,16 +218,10 @@ class Unit {
 	takeDamage(damage)
 	{
 		this.health -= damage;
-		if(this.health > 0)
+		if(this.health <= 0)
 		{
-			hit_audio.play();
+			this.destroy();
 		}
-		else
-		{
-			kill_audio.play();
-			// this.destroy();
-		}
-
 	}
 	changeSprite() {
 		this.plane.material.color.setHex( 0xff0000 );
