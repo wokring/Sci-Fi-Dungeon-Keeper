@@ -2,11 +2,11 @@ import {DungeonRoom} from "./DungeonRoom.js"
 import {Spawner, SpawnManager} from "../modules/Spawner.js";
 import {PathHelper} from "./PathHelper.js"
 import {scene} from "../src/main.js"
+import {Unit} from "../modules/Unit.js";
+import {Trap} from "../modules/Trap.js";
 
 
-
-
-const DungeonRooms = []; 
+const DungeonRooms = [];
 const DUNGEON_HEIGHT = 8;
 const DUNGEON_WIDTH = 8;
 const WORLD_MIN_X = -3.5;
@@ -74,11 +74,26 @@ function BuildDungeon()
 		curRoom.CreateMapTiles();
 	}
 
-	var myRoom = DungeonRooms[0][1];
-	const template = [10,10,10,1,1,1,null,[0,1],[-1,3]]
-	var mySpawner = new Spawner(myRoom, template, 2, 5);
-	var manager = new SpawnManager();
-	manager.addSpawn(mySpawner);
+	// var r1 = DungeonRooms[0][1];
+	var r1 = DungeonRooms[4][6];
+	var r2 = DungeonRooms[4][4];
+	var r3 = DungeonRooms[4][2];
+	// r1.trap = new Trap(1, 2, 1, 1);
+	// r2.trap = new Trap(1, 2, 1, 1);
+	// r3.trap = new Trap(1, 1, 1, 1);
+	// console.log(r1);
+	// console.log(r2);
+	// var hero = new Unit(scene, r1);
+	// r1.onMobEnter(hero);
+	// console.log(hero);
+	// console.log(r1);
+	// console.log(r2);
+	// r1.onMobExit(hero);
+	// r2.onMobEnter(hero);
+	// console.log(hero);
+	// console.log(r1);
+	// console.log(r2);
+
 
 	return DungeonRooms
 }

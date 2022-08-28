@@ -141,7 +141,7 @@ function onDocumentMouseDown( event ) {
                     break;
                 case 4:
                     if (DungeonRooms[x][y].isBuilt && DungeonRooms[x][y].trap == null){
-                        DungeonRooms[x][y].trap = new Trap(10,5,x -3 ,y -3);
+                        DungeonRooms[x][y].trap = new Trap(10,2,x -3 ,y -3);
 
                         scene.add(DungeonRooms[x][y].trap.sprite)
                         buildSuccess = true;
