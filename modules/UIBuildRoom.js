@@ -3,12 +3,11 @@ import {DungeonRoom} from "./DungeonRoom.js"
 import {MapTile} from "./MapTile.js"
 import { WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y } from "../modules/DungeonLayout.js"
 import {mobManager} from "./MobManager.js"
+import {playSound} from "../modules/SoundPlayer.js";
 
-var built_audio = new Audio('../sfx/BuildRoom.wav')
 function UIBuildRoom(buildType, quantizedWorldCoords)
 {
 	//array safety checks
-	//console.log(quantizedWorldCoords);
 	if(quantizedWorldCoords.x >= DungeonRooms.length)
 	{
 		console.log("Error: attempted to index " + quantizedWorldCoords.x + 
@@ -40,10 +39,10 @@ function UIBuildRoom(buildType, quantizedWorldCoords)
 	if(!CanBuild(chosenRoom))
 	{
 		//play sfx for build failure here
-
+		playSound("../sfx/TrapDebuff.wav");
 		return false;
 	}
-	built_audio.play();
+	playSound("../sfx/BuildRoom.wav");
 	chosenRoom.CreateMapTiles();
 	
 	update_dist()
