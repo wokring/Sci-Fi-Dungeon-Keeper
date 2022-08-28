@@ -11,6 +11,10 @@ function init(){
 	scene = new THREE.Scene();
 	renderer = new THREE.WebGLRenderer();
 
+    const BG_tex = new THREE.TextureLoader().load( '../sprites/BG.png' );
+    BG_tex.magFilter = THREE.NearestFilter
+    scene.background = BG_tex
+
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	CreateWorld();
 

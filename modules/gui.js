@@ -63,11 +63,16 @@ function init_gui(){
     ghostPlane.position.z = CAMERA_HIDDEN_Z;
     scene.add(ghostPlane);
 
-    const bar = new THREE.Mesh(new THREE.PlaneGeometry( 10, 1 ), new THREE.MeshBasicMaterial({ color: 0xFF0000 }));
+
+    const bar_tex = new THREE.TextureLoader().load( '../sprites/bar.png' );
+    bar_tex.magFilter = THREE.NearestFilter
+    const bar_mt = new THREE.MeshBasicMaterial({ map: bar_tex });
+    bar_mt.transparent = true;
+    const bar = new THREE.Mesh(new THREE.PlaneGeometry( 10, 1.5 ), bar_mt);
     bar.position.y += -4;
     bar.position.z += 3;
 
-    CP_ctx = create_context("blue","5")
+    CP_ctx = create_context("blue",circuit.toString())
     CP_t = new THREE.CanvasTexture(CP_ctx.canvas)
     var CP_tp =  new THREE.Mesh(plane05_1, new THREE.MeshBasicMaterial({ map: CP_t, }));
     CP_tp.material.transparent = true;
@@ -75,7 +80,7 @@ function init_gui(){
     CP_tp.position.z += 3;
     CP_tp.position.y += 2.6;
 
-    PT_ctx = create_context("blue","10")
+    PT_ctx = create_context("blue",power.toString())
     PT_t = new THREE.CanvasTexture(PT_ctx.canvas)
     var PT_tp =  new THREE.Mesh(plane05_1, new THREE.MeshBasicMaterial({ map: PT_t, }));
     PT_tp.material.transparent = true;
