@@ -37,6 +37,8 @@ class DungeonRoom
 		let room_tex = new THREE.TextureLoader().load( '../sprites/room.png' );
 		if (this.myDungeonIndex.x == 3 && this.myDungeonIndex.y == 3) {
 			room_tex = new THREE.TextureLoader().load( '../sprites/spawn_room.png' );
+		} else if (this.myDungeonIndex.x == 4 && this.myDungeonIndex.y == 4) {
+			room_tex = new THREE.TextureLoader().load( '../sprites/trophy_room.png' );
 		}
 		
 		room_tex.magFilter = THREE.NearestFilter
