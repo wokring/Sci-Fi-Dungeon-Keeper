@@ -31,6 +31,13 @@ class Ally{
 		this.scene.remove(this.plane);
 	}
 
+    changeSprite() {
+		this.plane.material.color.setHex( 0xff0000 );
+		setTimeout(function () {
+			this.plane.material.color.setHex( 0xffffff )
+		}.bind(this),500);
+	}
+
 
 
 }

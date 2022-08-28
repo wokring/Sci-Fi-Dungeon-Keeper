@@ -213,6 +213,7 @@ class DungeonRoom
 			if (this.ally[i] != null){
 				mob.health -= this.ally[i].attack;
 				this.ally[i].health -= mob.attack;
+				this.ally[i].changeSprite();
 				if(this.ally[i].health <= 0){
 					this.ally[i].destroy();
 					this.ally[i] = null
