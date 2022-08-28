@@ -6,8 +6,8 @@ import {modifyPower, camera} from "../modules/gui.js";
 import {playSound} from "../modules/SoundPlayer.js";
 
 
-const UNIT_SPRITE_WIDTH = 0.2;
-const UNIT_SPRITE_HEIGHT = 0.2;
+const UNIT_SPRITE_WIDTH = 0.7;
+const UNIT_SPRITE_HEIGHT = 0.7;
 const UNIT_Z = 3;
 
 const MOBSTATE_NONE = 0
@@ -210,9 +210,12 @@ class Unit {
 		this.plane.position.y = value.y;
 	}
 	makeSprite() {
-		const geometry = new THREE.PlaneGeometry(UNIT_SPRITE_WIDTH, UNIT_SPRITE_HEIGHT);
-		const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-		this.plane = new THREE.Mesh( geometry, material );
+        const geometry = new THREE.PlaneGeometry(UNIT_SPRITE_WIDTH, UNIT_SPRITE_HEIGHT);
+        const A_tex = new THREE.TextureLoader().load( "../sprites/units.png" );
+        A_tex.magFilter = THREE.NearestFilter
+        const A_mt= new THREE.MeshBasicMaterial({ map: A_tex });
+        A_mt.transparent = true;
+        this.plane = new THREE.Mesh(geometry, A_mt);		
 		this.plane.position.z = UNIT_Z;
 	}
 	takeDamage(damage)
@@ -226,7 +229,7 @@ class Unit {
 	changeSprite() {
 		this.plane.material.color.setHex( 0xff0000 );
 		setTimeout(function () {
-			this.plane.material.color.setHex( 0xffff00 )
+			this.plane.material.color.setHex( 0xffffff )
 		}.bind(this),500);
 	}
 
