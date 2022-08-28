@@ -234,7 +234,7 @@ class Unit {
 	}
 
 	destroy() {
-		modifyPower(5);
+		modifyPower(10);
 		this.mobState = MOBSTATE_NONE;
 		this.scene.remove(this.plane);
 		playSound('../sfx/EnemyDie.wav');
