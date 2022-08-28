@@ -2,7 +2,7 @@ import {mobManager} from './MobManager.js'
 import {PathHelper} from './PathHelper.js'
 import {DungeonRooms} from "./DungeonLayout.js"
 import {WORLD_MIN_X,WORLD_MIN_Y,WORLD_MAX_X,WORLD_MAX_Y} from "../modules/DungeonLayout.js"
-import {change_Power, camera} from "../modules/gui.js";
+import {modifyPower, camera} from "../modules/gui.js";
 import {playSound} from "../modules/SoundPlayer.js";
 
 
@@ -13,6 +13,7 @@ const UNIT_Z = 3;
 const MOBSTATE_NONE = 0
 const MOBSTATE_TREASUREHUNTING = 1;
 const MOBSTATE_ESCAPE = 2;
+const MOBSTATE_COMPAT = 3;
 
 const WANDER_CHANCE = 0.33;
 
@@ -22,10 +23,11 @@ var escape_audio = new Audio('../sfx/EnemyGetAwayWithPower.wav');
 
 class Unit {
 	static nextId = 1;
-	constructor(scene, startDungeonRoom)
+	constructor(scene, startDungeonRoom, attack = 5, health =10)
 	{
 		this.id = Unit.nextId++;
 		this.health = 5;
+        this.attack = attack;
 		this.makeSprite()
 		this.scene = scene;
 		scene.add(this.plane)
@@ -146,6 +148,10 @@ class Unit {
 					}
 				}
 			}
+            break;
+            case MOBSTATE_COMPAT:
+                this.changeSprite();
+                this.mobState = this.dungeonRoom.combat(this);
 		}
 	}
 	/*getCurrentMoveTarget()
@@ -231,7 +237,7 @@ class Unit {
 	}
 
 	destroy() {
-		change_Power(5);
+		modifyPower(5);
 		this.mobState = MOBSTATE_NONE;
 		this.scene.remove(this.plane);
 		playSound('../sfx/EnemyDie.wav');
