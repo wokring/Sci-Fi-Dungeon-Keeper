@@ -5,9 +5,9 @@ class WaveManager
 	constructor()
 	{
 		this.waveNum = 0;
-		this.tLeftWave = 5;
-		this.tBetweenWaves = 30;
-		this.spawnsPerWave = 5;
+		this.tLeftWave = 1;
+		this.tBetweenWaves = 999999;
+		this.spawnsPerWave = 6 ;
 		this.tLeftSpawn = 0;
 		this.tBetweenSpawn = 0.75;
 		this.spawnsLeft = 0;
@@ -35,13 +35,13 @@ class WaveManager
 				this.tLeftSpawn = this.tBetweenSpawn;
 				this.spawnMob();
 				this.spawnsLeft--;
-				console.log("spawning mob, " + this.spawnsLeft + " remaining");
+				//console.log("spawning mob, " + this.spawnsLeft + " remaining");
 			}
 		}
 	}
 	spawnWave()
 	{
-		console.log("spawning wave: " + this.waveNum);
+		//console.log("spawning wave: " + this.waveNum);
 		this.spawnsLeft += this.spawnsPerWave + this.waveNum;
 	}
 	spawnMob()

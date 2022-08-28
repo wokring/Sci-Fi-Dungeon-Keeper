@@ -26,8 +26,8 @@ const CAMERA_HIDDEN_Z = 100;
 const GHOST_BUILD_Z = 4;
 const frustumSize = 10;
 
-var power = 1000;
-var circuit = '';
+var power = 100;
+var circuit = 20;
 
 // var ROOM_COSTP = 10
 // var ROOM_COSTC = 2
@@ -66,7 +66,7 @@ function init_gui(){
     ghostPlane.position.z = CAMERA_HIDDEN_Z;
     scene.add(ghostPlane);
 
-    playSound("../sfx/CombatMusic.mp3");
+    playSound("../sfx/CombatMusic.mp3", true);
 
     const bar_tex = new THREE.TextureLoader().load( '../sprites/bar.png' );
     bar_tex.magFilter = THREE.NearestFilter
@@ -147,7 +147,6 @@ function onDocumentMouseDown( event ) {
             var x = mx-WORLD_MIN_X;
             var y = my-WORLD_MIN_Y;
             var buildSuccess = false;
-            let room;
 		switch(buildType)
 		{
 			case 1:
@@ -155,7 +154,7 @@ function onDocumentMouseDown( event ) {
                 playSound("../sfx/BuildRoom.wav");
 				break;
 			case 3:
-				room = DungeonRooms[x][y];
+				var room = DungeonRooms[x][y];
 				if (room.isBuilt && room.trap == null){
 				room.trap = new Spawner(room, [(scene, room)], 40, 4,x -3 ,y -3);
 				scene.add(room.trap.sprite)
@@ -164,7 +163,7 @@ function onDocumentMouseDown( event ) {
                 playSound("../sfx/BuildTrap.wav");
 				break;
 			case 4:
-				room = DungeonRooms[x][y];
+				var room = DungeonRooms[x][y];
 				if(!room.isBuilt)
 				{
 					console.log("Notice: Cannot build trap there, the room there is not built.");
@@ -328,9 +327,16 @@ function onDocumentKeyDown(event) {
     }
 }
 
-function change_Power(value) {
-    power += value;
-    update_text(power.toString(),PT_ctx,PT_t);
+function modifyPower(powermod)
+{
+	power += powermod
+	update_text(power.toString(),PT_ctx,PT_t);
 }
+function modifyCircuits(circuitmod)
+{
+	power += circuitmod
+        update_text(circuit.toString(),CP_ctx,CP_t);
+}
+//update_text(circuit.toString(),CP_ctx,CP_t);
 
-export {init_gui,camera,aspect,frustumSize,change_Power};
+export {init_gui,camera,aspect,frustumSize,modifyPower,modifyCircuits};
