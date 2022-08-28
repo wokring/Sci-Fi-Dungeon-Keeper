@@ -1,5 +1,5 @@
-import {mobManager} from './MobManager.js'
-import {PathHelper} from './PathHelper.js'
+import {mobManager} from '../modules/MobManager.js'
+import {PathHelper} from '../modules/PathHelper.js'
 
 const MOBSTATE_UNKNOWN = 0
 const MOBSTATE_PATHING = 1;
@@ -9,7 +9,9 @@ class Unit {
 	constructor(scene, startDungeonRoom)
 	{
 		this.id = Unit.nextId++;
+		this.health = 5;
 		this.makeSprite()
+		this.scene = scene;
 		scene.add(this.plane)
 		this.mobState = MOBSTATE_UNKNOWN;
 		this.currentPath = new Array();
@@ -34,39 +36,45 @@ class Unit {
 	}
 	Update(deltaTime)
 	{
-		switch(this.mobState)
-		{
-			case MOBSTATE_PATHING:
+		if (this.health > 0) {
+			// console.log("help me");
+			switch(this.mobState)
 			{
-				//get the angle between two points
-				//var currentAngle = this.dungeonRoom.getAngle(this.nextPathTarget);
-				/*var moveVector = this.nextPathTarget.getCentre().sub(this.dungeonRoom.getCentre());
-				console.log(this.dungeonRoom.getCentre().distanceToSquared(this.nextPathTarget.getCentre()));
-				moveVector.normalize();
-				moveVector.multiplyScalar(deltaTime, this.maxSpeed);*/
-				this.plane.position.y -= this.maxSpeed * deltaTime;
-				var sqrDist = this.getSqrdDist(this.nextPathTarget.getCentre());	
-				//console.log("sqrDist:" + sqrDist);
-				
-				if(sqrDist <= 0.01)
+				case MOBSTATE_PATHING:
 				{
-					this.dungeonRoom.onMobExit(this);
-					this.dungeonRoom = this.nextPathTarget;
-					this.dungeonRoom.onMobEnter(this);
-					
-					if(this.currentPath.length > 0)
+					//get the angle between two points
+					//var currentAngle = this.dungeonRoom.getAngle(this.nextPathTarget);
+					/*var moveVector = this.nextPathTarget.getCentre().sub(this.dungeonRoom.getCentre());
+                    console.log(this.dungeonRoom.getCentre().distanceToSquared(this.nextPathTarget.getCentre()));
+                    moveVector.normalize();
+                    moveVector.multiplyScalar(deltaTime, this.maxSpeed);*/
+					this.plane.position.y -= this.maxSpeed * deltaTime;
+					var sqrDist = this.getSqrdDist(this.nextPathTarget.getCentre());
+
+
+					if(sqrDist <= 0.01)
+
 					{
-						this.nextPathTarget = this.currentPath.shift();
-						sqrDist = this.getSqrdDist(this.nextPathTarget.getCentre());
-						//console.log("nextPathTarget:" + this.nextPathTarget.id + " sqrDist:" + sqrDist);
+						console.log("sqrDist:" + sqrDist);
+						console.log(this.health);
+						this.dungeonRoom.onMobExit(this);
+						this.dungeonRoom = this.nextPathTarget;
+						this.dungeonRoom.onMobEnter(this);
+
+						if(this.currentPath.length > 0)
+						{
+							this.nextPathTarget = this.currentPath.shift();
+							sqrDist = this.getSqrdDist(this.nextPathTarget.getCentre());
+							//console.log("nextPathTarget:" + this.nextPathTarget.id + " sqrDist:" + sqrDist);
+						}
+						else
+						{
+							console.log("finished pathing");
+							this.mobState = MOBSTATE_UNKNOWN;
+						}
 					}
-					else
-					{
-						//console.log("finished pathing");
-						this.mobState = MOBSTATE_UNKNOWN;
-					}
+					break;
 				}
-				break;
 			}
 		}
 	}
@@ -88,6 +96,18 @@ class Unit {
 		const geometry = new THREE.PlaneGeometry( 0.2, 0.2 );
 		const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
 		this.plane = new THREE.Mesh( geometry, material );
+	}
+
+	changeSprite() {
+		this.plane.material.color.setHex( 0xff0000 );
+		setTimeout(function () {
+			this.plane.material.color.setHex( 0xffff00 )
+		}.bind(this),500);
+	}
+
+	destroy() {
+		this.mobState = MOBSTATE_UNKNOWN;
+		this.scene.remove(this.plane);
 	}
     /*
     constructor(cost, health, damage, interval, speed, range, scene, room = [0,1], pos = [0,0], level = 1) {
@@ -145,14 +165,14 @@ class Unit {
         this._damage = value / (2^(this.level - 1));
     }
     */
-    getHit(damage, debuff = [1, 1]) {
-        if (this.damage - damage <= 0) {
-            mobManager.killUnit(this)
-        } else {
-            this.damage -= damage;
-        }
-        this.debuff = debuff;
-    }
+    // getHit(damage, debuff = [1, 1]) {
+    //     if (this.health - damage <= 0) {
+    //         mobManager.killUnit(this)
+    //     } else {
+    //         this.health -= damage;
+    //     }
+    //     this.debuff = debuff;
+    // }
     resetDebuff() {
         this.debuff = [1, 1]
     }

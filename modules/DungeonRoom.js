@@ -135,6 +135,18 @@ class DungeonRoom
 	onMobEnter(mob)
 	{
 		this.units_present.push(mob);
+		if (this.trap !== null) {
+			this.trap.doHit(mob);
+			if (mob.health <= 0) {
+				//mob is killed
+				this.units_present = this.units_present.filter(unit => unit !== mob);
+				mob.dungeonRoom = null;
+				mob.destroy();
+			} else {
+				mob.dungeonRoom = this;
+			}
+
+		}
 		//console.log("maptile #" + this.id + " entered by mob #" + mob.id);
 	}
 	onMobExit(mob)
@@ -142,6 +154,7 @@ class DungeonRoom
 		if(this.units_present.indexOf(mob) >= 0)
 		{
 			this.units_present.splice(this.units_present.indexOf(mob),1);
+			mob.dungeonRoom = null;
 			//console.log("maptile #" + this.id + " exited by mob #" + mob.id);
 		}
 	}
